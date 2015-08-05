@@ -53,10 +53,9 @@ def register_cached_inclusion_tag(template, key_fn=None,
             out = memcache.get(cache_key)
             if out is None:
                 context = f(*args, **kw)
-                t = jingo.env.get_template(template).render(context)
-                out = jinja2.Markup(t)
+                out = jingo.env.get_template(template).render(context)
                 memcache.set(cache_key, out, expires)
-            return out
+            return jinja2.Markup(out)
 
         return register.function(wrapper)
     return decorator
