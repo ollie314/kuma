@@ -55,6 +55,8 @@ def register_cached_inclusion_tag(template, key_fn=None,
                 context = f(*args, **kw)
                 out = jingo.env.get_template(template).render(context)
                 memcache.set(cache_key, out, expires)
+            else:
+                out = out.decode('utf-8')
             return jinja2.Markup(out)
 
         return register.function(wrapper)
