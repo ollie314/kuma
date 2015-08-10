@@ -59,6 +59,10 @@
         "English": "Breton",
         "native": "Brezhoneg"
     },
+    "brx": {
+        "English": "Bodo",
+        "native": "\u092c\u0930'"
+    },
     "bs": {
         "English": "Bosnian",
         "native": "Bosanski"
@@ -303,9 +307,17 @@
         "English": "Korean",
         "native": "\ud55c\uad6d\uc5b4"
     },
+    "kok": {
+        "English": "Konkani",
+        "native": "\u0915\u094b\u0902\u0915\u0928\u0940"
+    },
     "ku": {
         "English": "Kurdish",
         "native": "Kurd\u00ee"
+    },
+    "ks": {
+        "English": "Kashmiri",
+        "native": "\u0643\u0634\u0645\u06cc\u0631\u06cc"
     },
     "la": {
         "English": "Latin",
