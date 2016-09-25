@@ -65,18 +65,18 @@ def post(request, content, locale=settings.LANGUAGE_CODE,
 
 
 def _get_attachment_metadata_dict(attachment):
-    filesize = 0
+    current_revision = attachment.current_revision
     try:
-        filesize = attachment.current_revision.file.size
+        filesize = current_revision.file.size
     except OSError:
-        pass
+        filesize = 0
     return {
-        'title': attachment.title,
-        'description': attachment.current_revision.description,
-        'filename': attachment.current_revision.filename(),
+        'title': current_revision.title,
+        'description': current_revision.description,
+        'filename': current_revision.filename,
         'size': filesize,
-        'author': attachment.current_revision.creator.username,
-        'mime': attachment.current_revision.mime_type,
+        'author': current_revision.creator.username,
+        'mime': current_revision.mime_type,
         'url': attachment.get_file_url(),
     }
 
@@ -132,7 +132,7 @@ def get(document, cache_control, base_url, timeout=None):
 
         # Create the file interface
         files = []
-        for attachment in document.attachments.all():
+        for attachment in document.files.select_related('current_revision'):
             files.append(_get_attachment_metadata_dict(attachment))
 
         # Assemble some KumaScript env vars
@@ -152,10 +152,8 @@ def get(document, cache_control, base_url, timeout=None):
             files=files,
             attachments=files,  # Just for sake of verbiage?
             slug=document.slug,
-            tags=list(document.tags.values_list('name', flat=True)),
-            review_tags=list(document.current_revision
-                                     .review_tags
-                                     .values_list('name', flat=True)),
+            tags=list(document.tags.names()),
+            review_tags=list(document.current_revision.review_tags.names()),
             modified=time.mktime(document.modified.timetuple()),
             cache_control=cache_control,
         )
@@ -203,7 +201,7 @@ def get(document, cache_control, base_url, timeout=None):
                 },
             ]
 
-    except Exception, exc:
+    except Exception as exc:
         # Last resort: Something went really haywire. Kumascript server died
         # mid-request, or something. Try to report at least some hint.
         errors = [
@@ -262,7 +260,7 @@ def process_errors(response):
         if len(msgs):
             errors = msgs
 
-    except Exception, exc:
+    except Exception as exc:
         errors = [
             {
                 "level": "error",

@@ -1,26 +1,37 @@
+import os
 from importlib import import_module
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.messages.storage.fallback import FallbackStorage
 from django.core.cache import cache
-from django import test
 from django.test import TestCase, TransactionTestCase
 from django.test.client import Client
-from django.utils.functional import wraps
 from django.utils.translation import trans_real
-
-from constance import config
-from nose import SkipTest
-from nose.tools import eq_
 
 from ..cache import memcache
 from ..exceptions import FixtureMissingError
-from ..urlresolvers import split_path, reverse
+from ..urlresolvers import split_path
 
 
-get = lambda c, v, **kw: c.get(reverse(v, **kw), follow=True)
-post = lambda c, v, data={}, **kw: c.post(reverse(v, **kw), data, follow=True)
+def eq_(first, second, msg=None):
+    """Rough reimplementation of nose.tools.eq_
+
+    Note: This should be removed as soon as we no longer use it.
+
+    """
+    msg = msg or '%r != %r' % (first, second)
+    assert first == second, msg
+
+
+def ok_(pred, msg=None):
+    """Rough reimplementation of nose.tools.ok_
+
+    Note: This should be removed as soon as we no longer use it.
+
+    """
+    msg = msg or '%r != True' % pred
+    assert pred, msg
 
 
 def attrs_eq(received, **expected):
@@ -38,70 +49,6 @@ def get_user(username='testuser'):
         raise FixtureMissingError(
             'Username "%s" not found. You probably forgot to import a'
             ' users fixture.' % username)
-
-
-class overrider(object):
-    """
-    See http://djangosnippets.org/snippets/2437/
-
-    Acts as either a decorator, or a context manager.  If it's a decorator it
-    takes a function and returns a wrapped function.  If it's a contextmanager
-    it's used with the ``with`` statement.  In either event entering/exiting
-    are called before and after, respectively, the function/block is executed.
-    """
-    def __init__(self, **kwargs):
-        self.options = kwargs
-
-    def __enter__(self):
-        self.enable()
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        self.disable()
-
-    def __call__(self, func):
-        @wraps(func)
-        def inner(*args, **kwargs):
-            with self:
-                return func(*args, **kwargs)
-        return inner
-
-    def enable(self):
-        pass
-
-    def disable(self):
-        pass
-
-
-class override_constance_settings(overrider):
-    """Decorator / context manager to override constance settings and defeat
-    its caching."""
-
-    def enable(self):
-        self.old_cache = config._backend._cache
-        config._backend._cache = None
-        self.old_settings = dict((k, getattr(config, k))
-                                 for k in dir(config))
-        for k, v in self.options.items():
-            config._backend.set(k, v)
-
-    def disable(self):
-        for k, v in self.old_settings.items():
-            config._backend.set(k, v)
-        config._backend._cache = self.old_cache
-
-
-def mock_lookup_user():
-    return {u'confirmed': True,
-            u'country': u'us',
-            u'created-date': u'12/8/2013 8:05:55 AM',
-            u'email': u'testuser@test.com',
-            u'format': u'H',
-            u'lang': u'en-US',
-            u'master': True,
-            u'newsletters': [],
-            u'pending': False,
-            u'status': u'ok',
-            u'token': u'cdaa9e5d-2023-5f59-974d-83f6a29514ec'}
 
 
 class SessionAwareClient(Client):
@@ -165,8 +112,6 @@ class KumaTestMixin(object):
 
     @classmethod
     def setUpClass(cls):
-        if cls.skipme:
-            raise SkipTest
         if cls.localizing_client:
             cls.client_class = LocalizingClient
         super(KumaTestMixin, cls).setUpClass()
@@ -182,20 +127,6 @@ class KumaTestMixin(object):
         trans_real._translations = {}  # Django fails to clear this cache.
         trans_real.activate(settings.LANGUAGE_CODE)
 
-        global JINJA_INSTRUMENTED
-        if not JINJA_INSTRUMENTED:
-            import jinja2
-            old_render = jinja2.Template.render
-
-            def instrumented_render(self, *args, **kwargs):
-                context = dict(*args, **kwargs)
-                test.signals.template_rendered.send(sender=self, template=self,
-                                                    context=context)
-                return old_render(self, *args, **kwargs)
-
-            jinja2.Template.render = instrumented_render
-            JINJA_INSTRUMENTED = True
-
     def get_messages(self, request):
         # Django 1.4 RequestFactory requests can't be used to test views that
         # call messages.add (https://code.djangoproject.com/ticket/17971)
@@ -204,6 +135,12 @@ class KumaTestMixin(object):
         request._messages = messages
         return messages
 
+    def assertFileExists(self, path):
+        self.assertTrue(os.path.exists(path), u'Path %r does not exist' % path)
+
+    def assertFileNotExists(self, path):
+        self.assertFalse(os.path.exists(path), u'Path %r does exist' % path)
+
 
 class KumaTestCase(KumaTestMixin, TestCase):
     pass
@@ -211,7 +148,3 @@ class KumaTestCase(KumaTestMixin, TestCase):
 
 class KumaTransactionTestCase(KumaTestMixin, TransactionTestCase):
     pass
-
-
-class SkippedTestCase(KumaTestCase):
-    skipme = True

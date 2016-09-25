@@ -1,15 +1,7 @@
 import collections
+import json
 import operator
-
-from django import forms
-from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import permission_required
-from django.contrib.auth.models import Group
-from django.core.paginator import Paginator
-from django.db import transaction
-from django.db.models import Q
-from django.http import Http404, HttpResponseForbidden, HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render, redirect
+from datetime import datetime, timedelta
 
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
@@ -17,16 +9,28 @@ from allauth.socialaccount import helpers
 from allauth.socialaccount.models import SocialAccount
 from allauth.socialaccount.views import SignupView as BaseSignupView
 from constance import config
+from django import forms
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import Group
+from django.core.mail import send_mail
+from django.db import IntegrityError, transaction
+from django.db.models import Q
+from django.http import HttpResponseBadRequest, HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.views.decorators.http import require_POST
+from django.utils.translation import ugettext_lazy as _
 from honeypot.decorators import verify_honeypot_value
 from taggit.utils import parse_tags
-from tower import ugettext_lazy as _
 
 from kuma.core.decorators import login_required
-from kuma.demos.models import Submission
-from kuma.demos.views import DEMOS_PAGE_SIZE
+from kuma.wiki.forms import RevisionAkismetSubmissionSpamForm
+from kuma.wiki.models import Document, DocumentDeletionLog, Revision, RevisionAkismetSubmission
 
-from .forms import UserBanForm, UserEditForm, NewsletterForm
-from .models import UserBan, User
+from .forms import UserBanForm, UserEditForm
+from .models import User, UserBan
 # we have to import the signup form here due to allauth's odd form subclassing
 # that requires providing a base form class (see ACCOUNT_SIGNUP_FORM_CLASS)
 from .signup import SignupForm
@@ -50,15 +54,13 @@ INTEREST_SUGGESTIONS = [
 
 
 @permission_required('users.add_userban')
-def ban_user(request, user_id):
+def ban_user(request, username):
     """
     Ban a user.
     """
     User = get_user_model()
-    try:
-        user = User.objects.get(pk=user_id)
-    except User.DoesNotExist:
-        raise Http404
+    user = get_object_or_404(User, username=username)
+
     if request.method == 'POST':
         form = UserBanForm(data=request.POST)
         if form.is_valid():
@@ -68,11 +70,279 @@ def ban_user(request, user_id):
                           is_active=True)
             ban.save()
             return redirect(user)
-    form = UserBanForm()
+    else:
+        if user.active_ban:
+            return redirect(user)
+        form = UserBanForm()
+    # A list of common reasons for banning a user, loaded from constance
+    try:
+        common_reasons = json.loads(config.COMMON_REASONS_TO_BAN_USERS)
+    except (TypeError, ValueError):
+        common_reasons = ['Spam']
+    else:
+        if not common_reasons:
+            common_reasons = ['Spam']
     return render(request,
                   'users/ban_user.html',
                   {'form': form,
-                   'user': user})
+                   'detail_user': user,
+                   'common_reasons': common_reasons})
+
+
+@permission_required('users.add_userban')
+def ban_user_and_cleanup(request, username):
+    """
+    A page to ban a user for the reason of "Spam" and mark the user's revisions
+    and page creations as spam, reverting as many of them as possible.
+    """
+    user = get_object_or_404(User, username=username)
+
+    # Is this user already banned?
+    user_ban = UserBan.objects.filter(user=user, is_active=True)
+
+    # Get revisions for the past 3 days for this user
+    date_three_days_ago = datetime.now().date() - timedelta(days=3)
+    revisions = user.created_revisions.prefetch_related('document')
+    revisions = revisions.defer('content', 'summary').order_by('-id')
+    revisions = revisions.filter(created__gte=date_three_days_ago)
+    revisions_not_spam = revisions.filter(akismet_submissions=None)
+
+    return render(request,
+                  'users/ban_user_and_cleanup.html',
+                  {'detail_user': user,
+                   'user_banned': user_ban,
+                   'revisions': revisions,
+                   'revisions_not_spam': revisions_not_spam,
+                   'on_ban_page': True})
+
+
+@require_POST
+@permission_required('users.add_userban')
+def ban_user_and_cleanup_summary(request, username):
+    """
+    A summary page of actions taken when banning a user and reverting revisions
+    This method takes all the revisions from the last three days,
+    sends back the list of revisions that were successfully reverted/deleted
+    and submitted to Akismet, and also a list of
+    revisions where no action was taken (revisions needing follow up).
+    """
+    user = get_object_or_404(User, username=username)
+
+    # Is this user already banned?
+    user_ban = UserBan.objects.filter(user=user, is_active=True)
+
+    # If the user is not banned, ban user; else, update 'by' and 'reason'
+    if not user_ban.exists():
+        ban = UserBan(user=user,
+                      by=request.user,
+                      reason='Spam',
+                      is_active=True)
+        ban.save()
+    else:
+        user_ban.update(by=request.user, reason='Spam')
+
+    date_three_days_ago = datetime.now().date() - timedelta(days=3)
+    revisions_from_last_three_days = user.created_revisions.prefetch_related('document')
+    revisions_from_last_three_days = revisions_from_last_three_days.defer('content', 'summary').order_by('-id')
+    revisions_from_last_three_days = revisions_from_last_three_days.filter(created__gte=date_three_days_ago)
+
+    """ The "Actions Taken" section """
+    # The revisions to be submitted to Akismet and reverted,
+    # these must be sorted descending so that they are reverted accordingly
+    revisions_to_mark_as_spam_and_revert = revisions_from_last_three_days.filter(
+        id__in=request.POST.getlist('revision-id')).order_by('-id')
+
+    # 1. Submit revisions to Akismet as spam
+    # 2. If this is the most recent revision for a document:
+    #    Revert revision if it has a previous version OR
+    #    Delete revision if it is a new document
+    submitted_to_akismet = []
+    not_submitted_to_akismet = []
+    revisions_reverted_list = []
+    revisions_not_reverted_list = []
+    revisions_deleted_list = []
+    revisions_not_deleted_list = []
+    latest_is_not_spam = [
+        rev for rev in revision_by_distinct_doc(revisions_to_mark_as_spam_and_revert)
+        if rev.document.current_revision != rev
+    ]
+    previous_good_rev = {}
+
+    for revision in revisions_to_mark_as_spam_and_revert:
+        submission = RevisionAkismetSubmission(sender=request.user, type="spam")
+        akismet_submission_data = {'revision': revision.id}
+
+        data = RevisionAkismetSubmissionSpamForm(
+            data=akismet_submission_data,
+            instance=submission,
+            request=request)
+        # Submit to Akismet or note that validation & sending to Akismet failed
+        if data.is_valid():
+            data.save()
+            # Since we only want to display 1 revision per document, only add to
+            # this list if this is one of the revisions for a distinct document
+            submitted_to_akismet.append(revision)
+        else:
+            not_submitted_to_akismet.append(revision)
+
+        # If there is a current revision and the revision is not in the spam list,
+        # to be reverted, do not revert any revisions
+        try:
+            revision.document.refresh_from_db(fields=['current_revision'])
+        except Document.DoesNotExist:
+            continue  # This document was previously deleted in this loop, continue
+        if revision.document.current_revision not in revisions_to_mark_as_spam_and_revert:
+            if revision.document_id not in previous_good_rev:
+                previous_good_rev[revision.document_id] = revision.document.current_revision
+
+            continue  # This document has a more current revision, no need to revert
+
+        # Loop through all previous revisions to find the oldest spam
+        # revision on a specific document from this request.
+        while revision.previous in revisions_to_mark_as_spam_and_revert:
+            revision = revision.previous
+        # If this is a new revision on an existing document, revert it
+        if revision.previous:
+            previous_good_rev[revision.document_id] = revision.previous
+
+            reverted = revert_document(request=request,
+                                       revision_id=revision.previous.id)
+            if reverted:
+                revisions_reverted_list.append(revision)
+            else:
+                # If the revert was unsuccessful, include this in the follow-up list
+                revisions_not_reverted_list.append(revision)
+
+        # If this is a new document/translation, delete it
+        else:
+            deleted = delete_document(request=request,
+                                      document=revision.document)
+            if deleted:
+                revisions_deleted_list.append(revision)
+            else:
+                # If the delete was unsuccessful, include this in the follow-up list
+                revisions_not_deleted_list.append(revision)
+
+    # Find just the latest revision for each document
+    submitted_to_akismet_by_distinct_doc = revision_by_distinct_doc(submitted_to_akismet)
+    not_submitted_to_akismet_by_distinct_doc = revision_by_distinct_doc(not_submitted_to_akismet)
+    revisions_reverted_by_distinct_doc = revision_by_distinct_doc(revisions_reverted_list)
+    revisions_not_reverted_by_distinct_doc = revision_by_distinct_doc(revisions_not_reverted_list)
+    revisions_deleted_by_distinct_doc = revision_by_distinct_doc(revisions_deleted_list)
+    revisions_not_deleted_by_distinct_doc = revision_by_distinct_doc(revisions_not_deleted_list)
+
+    actions_taken = {
+        'revisions_reported_as_spam': submitted_to_akismet_by_distinct_doc,
+        'revisions_reverted_list': revisions_reverted_by_distinct_doc,
+        'revisions_deleted_list': revisions_deleted_by_distinct_doc
+    }
+
+    """ The "Needs followup" section """
+    # TODO: Phase V: If user made actions while reviewer was banning them
+    new_action_by_user = []
+    skipped_revisions = [rev for rev in revisions_to_mark_as_spam_and_revert
+                         if rev.document_id in previous_good_rev and
+                         rev.id < previous_good_rev[rev.document_id].id]
+    skipped_revisions = revision_by_distinct_doc(skipped_revisions)
+
+    needs_follow_up = {
+        'manual_revert': new_action_by_user,
+        'skipped_revisions': skipped_revisions,
+        'not_submitted_to_akismet': not_submitted_to_akismet_by_distinct_doc,
+        'not_reverted_list': revisions_not_reverted_by_distinct_doc,
+        'not_deleted_list': revisions_not_deleted_by_distinct_doc
+    }
+
+    """ The "No Actions Taken" section """
+    revisions_already_spam = revisions_from_last_three_days.filter(
+        id__in=request.POST.getlist('revision-already-spam')
+    )
+    revisions_already_spam = list(revisions_already_spam)
+    revisions_already_spam_by_distinct_doc = revision_by_distinct_doc(revisions_already_spam)
+
+    identified_as_not_spam = [rev for rev in revisions_from_last_three_days
+                              if rev not in revisions_already_spam and
+                              rev not in revisions_to_mark_as_spam_and_revert]
+    identified_as_not_spam_by_distinct_doc = revision_by_distinct_doc(identified_as_not_spam)
+
+    no_actions_taken = {
+        'latest_revision_is_not_spam': latest_is_not_spam,
+        'revisions_already_identified_as_spam': revisions_already_spam_by_distinct_doc,
+        'revisions_identified_as_not_spam': identified_as_not_spam_by_distinct_doc
+    }
+
+    context = {'detail_user': user,
+               'form': UserBanForm(),
+               'actions_taken': actions_taken,
+               'needs_follow_up': needs_follow_up,
+               'no_actions_taken': no_actions_taken}
+
+    # Send an email to the spam watch mailing list.
+    ban_and_revert_notification(user, request.user, context)
+
+    return render(request,
+                  'users/ban_user_and_cleanup_summary.html',
+                  context)
+
+
+def revision_by_distinct_doc(list_of_revisions):
+    documents = {}
+    for rev in list_of_revisions:
+        documents.setdefault(rev.document_id, rev)
+        if documents[rev.document_id].id < rev.id:
+            documents[rev.document_id] = rev
+
+    return [documents[doc_id] for doc_id in sorted(documents)]
+
+
+def ban_and_revert_notification(spammer, moderator, info):
+    subject = u'[MDN] %s has been banned by %s' % (spammer, moderator)
+    context = {'spammer': spammer,
+               'moderator': moderator}
+    context.update(info)
+    body = render_to_string('wiki/email/spam_ban.ltxt', context)
+
+    send_mail(subject, body, settings.DEFAULT_FROM_EMAIL,
+              [config.EMAIL_LIST_SPAM_WATCH])
+
+
+@permission_required('users.add_userban')
+def revert_document(request, revision_id):
+    """
+    Revert document to a specific revision.
+    """
+    revision = get_object_or_404(Revision.objects.select_related('document'),
+                                 pk=revision_id)
+
+    comment = "spam"
+    document = revision.document
+    old_revision_pk = revision.pk
+    try:
+        new_revision = document.revert(revision, request.user, comment)
+        # schedule a rendering of the new revision if it really was saved
+        if new_revision.pk != old_revision_pk:  # pragma: no branch
+            document.schedule_rendering('max-age=0')
+    except IntegrityError:
+        return False
+    return True
+
+
+@permission_required('wiki.delete_document')
+def delete_document(request, document):
+    """
+    Delete a Document.
+    """
+    try:
+        DocumentDeletionLog.objects.create(
+            locale=document.locale,
+            slug=document.slug,
+            user=request.user,
+            reason='Spam',
+        )
+        document.delete()
+    except Exception:
+        return False
+    return True
 
 
 def user_detail(request, username):
@@ -86,31 +356,7 @@ def user_detail(request, username):
         return render(request, '403.html',
                       {'reason': 'bannedprofile'}, status=403)
 
-    sort_order = request.GET.get('sort', 'created')
-    try:
-        page_number = int(request.GET.get('page', 1))
-    except ValueError:
-        page_number = 1
-
-    show_hidden = detail_user == request.user or detail_user.is_superuser
-
-    demos = (Submission.objects.all_sorted(sort_order)
-                               .filter(creator=detail_user))
-    if not show_hidden:
-        demos = demos.exclude(hidden=True)
-
-    demos_paginator = Paginator(demos, DEMOS_PAGE_SIZE, True)
-    demos_page = demos_paginator.page(page_number)
-
-    docs_feed_items = None
-
-    context = {
-        'demos': demos,
-        'demos_paginator': demos_paginator,
-        'demos_page': demos_page,
-        'detail_user': detail_user,
-        'docs_feed_items': docs_feed_items,
-    }
+    context = {'detail_user': detail_user}
     return render(request, 'users/user_detail.html', context)
 
 
@@ -139,8 +385,6 @@ def user_edit(request, username):
         ('expertise', 'profile:expertise:')
     )
 
-    already_subscribed = NewsletterForm.is_subscribed(edit_user.email)
-
     if request.method != 'POST':
         initial = {
             'beta': edit_user.is_beta_tester,
@@ -152,30 +396,17 @@ def user_edit(request, username):
             initial[field] = ', '.join(tag.name.replace(ns, '')
                                        for tag in edit_user.tags.all_ns(ns))
 
-        subscription_initial = {}
-        if already_subscribed:
-            subscription_initial['newsletter'] = True
-            subscription_initial['agree'] = True
-
         # Finally, set up the forms.
         user_form = UserEditForm(instance=edit_user,
                                  initial=initial,
                                  prefix='user')
-        newsletter_form = NewsletterForm(locale=request.locale,
-                                         already_subscribed=already_subscribed,
-                                         prefix='newsletter',
-                                         initial=subscription_initial)
     else:
         user_form = UserEditForm(data=request.POST,
                                  files=request.FILES,
                                  instance=edit_user,
                                  prefix='user')
-        newsletter_form = NewsletterForm(locale=request.locale,
-                                         already_subscribed=already_subscribed,
-                                         data=request.POST,
-                                         prefix='newsletter')
 
-        if user_form.is_valid() and newsletter_form.is_valid():
+        if user_form.is_valid():
             new_user = user_form.save()
 
             try:
@@ -195,33 +426,19 @@ def user_edit(request, username):
                 tags = [tag.lower() for tag in parse_tags(field_value)]
                 new_user.tags.set_ns(tag_ns, *tags)
 
-            newsletter_form.subscribe(request, new_user.email)
             return redirect(edit_user)
 
     context = {
         'edit_user': edit_user,
         'user_form': user_form,
-        'newsletter_form': newsletter_form,
         'INTEREST_SUGGESTIONS': INTEREST_SUGGESTIONS,
     }
     return render(request, 'users/user_edit.html', context)
 
 
-def apps_newsletter(request):
-    """
-    Just a placeholder for an old view that we used to have to handle
-    newsletter subscriptions before they were moved into the user edit view.
-    """
-    return render(request, 'users/apps_newsletter.html', {})
-
-
 class SignupView(BaseSignupView):
     """
-    The default signup view from the allauth account app, only to
-    additionally pass in the locale to the SignupForm as defined in
-    the ACCOUNT_SIGNUP_FORM_CLASS setting. This is needed to correctly
-    populate the country form field's choices from the product_details
-    app.
+    The default signup view from the allauth account app.
 
     You can remove this class if there is no other modification compared
     to it's parent class.
@@ -238,43 +455,29 @@ class SignupView(BaseSignupView):
         self.matching_user = None
         initial_username = form.initial.get('username', None)
         # For GitHub users, see if we can find matching user by username
-        if self.sociallogin.account.provider == 'github':
-            User = get_user_model()
-            try:
-                self.matching_user = User.objects.get(username=initial_username)
-                # deleting the initial username because we found a matching user
-                del form.initial['username']
-            except User.DoesNotExist:
-                pass
+        assert self.sociallogin.account.provider == 'github'
+        User = get_user_model()
+        try:
+            self.matching_user = User.objects.get(username=initial_username)
+            # deleting the initial username because we found a matching user
+            del form.initial['username']
+        except User.DoesNotExist:
+            pass
 
         email = self.sociallogin.account.extra_data.get('email') or None
-
-        # For Persona users, see if we can find matching user by email address
-        if self.sociallogin.account.provider == 'persona':
-            try:
-                matching_addresses = EmailAddress.objects.filter(email=email,
-                                                                 verified=True)
-                matching_emailaddress = matching_addresses[0]
-                self.matching_user = matching_emailaddress.user
-                email_address = {'email': email,
-                                 'verified': matching_emailaddress.verified,
-                                 'primary': matching_emailaddress.primary}
-                self.email_addresses[email] = email_address
-            except IndexError:
-                pass
-
         extra_email_addresses = (self.sociallogin
                                      .account
                                      .extra_data
-                                     .get('email_addresses', None))
+                                     .get('email_addresses')) or []
 
         # if we didn't get any extra email addresses from the provider
         # but the default email is available, simply hide the form widget
-        if extra_email_addresses is None and email is not None:
+        if not extra_email_addresses and email is not None:
             form.fields['email'].widget = forms.HiddenInput()
 
-        # if there are extra email addresses from the provider (like GitHub)
-        elif extra_email_addresses is not None:
+        # let the user choose from provider's extra email addresses, or enter
+        # a new one.
+        else:
             # build a mapping of the email addresses to their other values
             # to be used later for resetting the social accounts email addresses
             for email_address in extra_email_addresses:
@@ -299,21 +502,16 @@ class SignupView(BaseSignupView):
                     label = _('%(email)s Unverified')
                 next_email = email_address['email']
                 choices.append((next_email, label % {'email': next_email}))
-            choices.append((form.other_email_value, _('Other:')))
+            if extra_email_addresses:
+                choices.append((form.other_email_value, _('Other:')))
+            else:
+                choices.append((form.other_email_value, _('Email:')))
             email_select = forms.RadioSelect(choices=choices,
                                              attrs={'id': 'email'})
             form.fields['email'].widget = email_select
             if not email and len(verified_emails) == 1:
                 form.initial.update(email=verified_emails[0])
         return form
-
-    def get_form_kwargs(self):
-        kwargs = super(SignupView, self).get_form_kwargs()
-        kwargs.update({
-            'locale': self.request.locale,
-            'already_subscribed': False,
-        })
-        return kwargs
 
     def form_valid(self, form):
         """
@@ -354,15 +552,10 @@ class SignupView(BaseSignupView):
         context = super(SignupView, self).get_context_data(**kwargs)
         or_query = []
         # For GitHub users, find matching Persona social accounts by emails
-        if self.sociallogin.account.provider == 'github':
-            for email_address in self.email_addresses.values():
-                if email_address['verified']:
-                    or_query.append(Q(uid=email_address['email']))
-
-        # For Persona users, find matching GitHub social accounts directly
-        elif self.sociallogin.account.provider == 'persona':
-            if self.matching_user:
-                or_query.append(Q(user=self.matching_user, provider='github'))
+        assert self.sociallogin.account.provider == 'github'
+        for email_address in self.email_addresses.values():
+            if email_address['verified']:
+                or_query.append(Q(uid=email_address['email']))
 
         if or_query:
             reduced_or_query = reduce(operator.or_, or_query)

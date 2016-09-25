@@ -3,19 +3,21 @@ import datetime
 import json
 
 from django.conf import settings
-from django.db.models import F
 from django.contrib.syndication.views import Feed
+from django.db.models import F
+from django.utils.feedgenerator import (Atom1Feed, Rss201rev2Feed,
+                                        SyndicationFeed)
 from django.utils.html import escape
-from django.utils.feedgenerator import (SyndicationFeed, Rss201rev2Feed,
-                                        Atom1Feed)
 from django.utils.translation import ugettext as _
 
+from kuma.core.templatetags.jinja_helpers import add_utm
 from kuma.core.urlresolvers import reverse
 from kuma.core.validators import valid_jsonp_callback_value
-from kuma.users.helpers import gravatar_url
+from kuma.users.templatetags.jinja_helpers import gravatar_url
 
-from .helpers import diff_table, tag_diff_table, get_compare_url, colorize_diff
 from .models import Document, Revision
+from .templatetags.jinja_helpers import (colorize_diff, diff_table,
+                                         get_compare_url, tag_diff_table)
 
 
 MAX_FEED_ITEMS = getattr(settings, 'MAX_FEED_ITEMS', 500)
@@ -32,7 +34,7 @@ class DocumentsFeed(Feed):
         if 'all_locales' in request.GET:
             self.locale = None
         else:
-            self.locale = request.locale
+            self.locale = request.LANGUAGE_CODE
         return super(DocumentsFeed, self).__call__(request, *args, **kwargs)
 
     def feed_extra_kwargs(self, obj):
@@ -62,11 +64,15 @@ class DocumentsFeed(Feed):
         return document.current_revision.creator.username
 
     def item_author_link(self, document):
-        return self.request.build_absolute_uri(
-            document.current_revision.creator.get_absolute_url())
+        return add_utm(
+            self.request.build_absolute_uri(
+                document.current_revision.creator.get_absolute_url()),
+            'feed', medium='rss')
 
     def item_link(self, document):
-        return self.request.build_absolute_uri(document.get_absolute_url())
+        return add_utm(
+            self.request.build_absolute_uri(document.get_absolute_url()),
+            'feed', medium='rss')
 
     def item_categories(self, document):
         return document.tags.all()
@@ -111,15 +117,14 @@ class DocumentJSONFeedGenerator(SyndicationFeed):
             if revision.creator.email:
                 item_out['author_avatar'] = gravatar_url(revision.creator.email)
 
-            summary = revision.summary
+            summary = getattr(revision, 'summary', None)
             if summary:
                 item_out['summary'] = summary
 
             # Linkify the tags used in the feed item
             categories = dict(
                 (x, request.build_absolute_uri(
-                    reverse('kuma.wiki.views.list_documents',
-                            kwargs={'tag': x})))
+                    reverse('wiki.tag', kwargs={'tag': x})))
                 for x in item['categories']
             )
             if categories:
@@ -143,9 +148,8 @@ class DocumentsRecentFeed(DocumentsFeed):
     title = _('MDN recent document changes')
     subtitle = _('Recent changes to MDN documents')
 
-    def get_object(self, request, format, tag=None, category=None):
+    def get_object(self, request, format, tag=None):
         super(DocumentsRecentFeed, self).get_object(request, format)
-        self.category = category
         self.tag = tag
         if tag:
             self.title = _('MDN recent changes to documents tagged %s' % tag)
@@ -153,17 +157,16 @@ class DocumentsRecentFeed(DocumentsFeed):
                 reverse('wiki.tag', args=(tag,)))
         else:
             self.link = self.request.build_absolute_uri(
-                reverse('kuma.wiki.views.list_documents'))
+                reverse('wiki.all_documents'))
 
     def items(self):
         # Temporarily storing the selected documents PKs in a list
         # to speed up retrieval (max MAX_FEED_ITEMS size)
         item_pks = (Document.objects
                             .filter_for_list(tag_name=self.tag,
-                                             category=self.category,
                                              locale=self.locale)
                             .filter(current_revision__isnull=False)
-                            .order_by('-current_revision__created')
+                            .order_by('-current_revision__id')
                             .values_list('pk', flat=True)[:MAX_FEED_ITEMS])
         return (Document.objects.filter(pk__in=list(item_pks))
                                 .defer('html')
@@ -185,12 +188,11 @@ class DocumentsReviewFeed(DocumentsRecentFeed):
         if tag:
             self.title = _('MDN documents for %s review' % tag)
             self.link = self.request.build_absolute_uri(
-                reverse('kuma.wiki.views.list_documents_for_review',
-                        args=(tag,)))
+                reverse('wiki.list_review_tag', args=(tag,)))
         else:
             self.title = _('MDN documents for review')
             self.link = self.request.build_absolute_uri(
-                reverse('kuma.wiki.views.list_documents_for_review'))
+                reverse('wiki.list_review'))
         return tag
 
     def items(self, tag=None):
@@ -199,7 +201,7 @@ class DocumentsReviewFeed(DocumentsRecentFeed):
         item_pks = (Document.objects
                             .filter_for_review(tag_name=tag, locale=self.locale)
                             .filter(current_revision__isnull=False)
-                            .order_by('-current_revision__created')
+                            .order_by('-current_revision__id')
                             .values_list('pk', flat=True)[:MAX_FEED_ITEMS])
         return (Document.objects.filter(pk__in=list(item_pks))
                                 .defer('html')
@@ -212,6 +214,8 @@ class DocumentsUpdatedTranslationParentFeed(DocumentsFeed):
     """Feed of translated documents whose parent has been modified since the
     translation was last updated."""
 
+    description_template = 'wiki/feed_docs_updated.html'
+
     def get_object(self, request, format, tag=None):
         super(DocumentsUpdatedTranslationParentFeed,
               self).get_object(request, format)
@@ -220,58 +224,32 @@ class DocumentsUpdatedTranslationParentFeed(DocumentsFeed):
                        self.locale)
         # TODO: Need an HTML / dashboard version of this feed
         self.link = self.request.build_absolute_uri(
-            reverse('kuma.wiki.views.list_documents'))
+            reverse('wiki.all_documents'))
 
     def items(self):
         return (Document.objects
                         .prefetch_related('parent')
                         .filter(locale=self.locale, parent__isnull=False)
                         .filter(modified__lt=F('parent__modified'))
-                        .order_by('-parent__current_revision__created')
+                        .order_by('-parent__current_revision__id')
                 [:MAX_FEED_ITEMS])
 
-    def item_description(self, item):
-        # TODO: Needs to be a jinja template?
-        template = _(u"""
-            <p>
-              <a href="%(parent_url)s" title="%(parent_title)s">
-                 View '%(parent_locale)s' parent
-              </a>
-              (<a href="%(mod_url)s">last modified at %(parent_modified)s</a>)
-            </p>
-            <p>
-              <a href="%(doc_edit_url)s" title="%(doc_title)s">
-                  Edit '%(doc_locale)s' translation
-              </a>
-              (last modified at %(doc_modified)s)
-            </p>
-        """)
-        doc, parent = item, item.parent
+    def get_context_data(self, **kwargs):
+        context = super(DocumentsUpdatedTranslationParentFeed,
+                        self).get_context_data(**kwargs)
 
-        trans_based_on_pk = (Revision.objects.filter(document=parent)
-                                             .filter(created__lte=doc.modified)
-                                             .order_by('created')
+        obj = context.get('obj')
+        trans_based_on_pk = (Revision.objects.filter(document=obj.parent)
+                                             .filter(created__lte=obj.modified)
+                                             .order_by('id')
                                              .values_list('pk', flat=True)
                                              .first())
-        mod_url = get_compare_url(parent,
+        mod_url = get_compare_url(obj.parent,
                                   trans_based_on_pk,
-                                  parent.current_revision.id)
+                                  obj.parent.current_revision.id)
 
-        context = {
-            'doc_url': self.request.build_absolute_uri(doc.get_absolute_url()),
-            'doc_edit_url': self.request.build_absolute_uri(
-                reverse('wiki.edit_document', args=[doc.slug])),
-            'doc_title': doc.title,
-            'doc_locale': doc.locale,
-            'doc_modified': doc.modified,
-            'parent_url': self.request.build_absolute_uri(
-                parent.get_absolute_url()),
-            'parent_title': parent.title,
-            'parent_locale': parent.locale,
-            'parent_modified': parent.modified,
-            'mod_url': mod_url,
-        }
-        return template % context
+        context['mod_url'] = mod_url
+        return context
 
 
 class RevisionsFeed(DocumentsFeed):
@@ -297,7 +275,7 @@ class RevisionsFeed(DocumentsFeed):
 
         # Temporarily storing the selected revision PKs in a list
         # to speed up retrieval (max MAX_FEED_ITEMS size)
-        item_pks = (items.order_by('-created')
+        item_pks = (items.order_by('-id')
                          .values_list('pk', flat=True)[start:finish])
         return (Revision.objects.filter(pk__in=list(item_pks))
                                 .prefetch_related('creator',
@@ -326,9 +304,8 @@ class RevisionsFeed(DocumentsFeed):
         content_diff = u''
 
         if previous:
-            prev_review_tags = previous.review_tags.values_list('name',
-                                                                flat=True)
-            curr_review_tags = item.review_tags.values_list('name', flat=True)
+            prev_review_tags = previous.review_tags.names()
+            curr_review_tags = item.review_tags.names()
             if set(prev_review_tags) != set(curr_review_tags):
                 table = tag_diff_table(u','.join(prev_review_tags),
                                        u','.join(curr_review_tags),
@@ -358,21 +335,34 @@ class RevisionsFeed(DocumentsFeed):
             content_diff = content_diff + escape(item.content)
 
         link_cell = u'<td><a href="%s">%s</a></td>'
-        view_cell = link_cell % (item.document.get_absolute_url(),
+        view_cell = link_cell % (add_utm(item.document.get_absolute_url(),
+                                         'feed', medium='rss'),
                                  _('View Page'))
-        edit_cell = link_cell % (reverse('wiki.edit_document',
-                                         args=[item.document.slug]),
+        edit_cell = link_cell % (add_utm(item.document.get_edit_url(),
+                                         'feed', medium='rss'),
                                  _('Edit Page'))
         if previous:
-            compare_cell = link_cell % (get_compare_url(item.document,
-                                                        previous.id,
-                                                        item.id),
-                                        _('Show comparison'))
+            compare_cell = link_cell % (
+                add_utm(
+                    get_compare_url(item.document, previous.id, item.id),
+                    'feed',
+                    medium='rss'
+                ),
+                _('Show comparison')
+            )
         else:
             compare_cell = ''
-        history_cell = link_cell % (reverse('wiki.document_revisions',
-                                            args=[item.document.slug]),
-                                    _('History'))
+
+        history_cell = link_cell % (
+            add_utm(
+                reverse(
+                    'wiki.document_revisions', args=[item.document.slug]
+                ),
+                'feed',
+                medium='rss'
+            ),
+            _('History')
+        )
         links_table = u'<table border="0" width="80%">'
         links_table = links_table + u'<tr>%s%s%s%s</tr>' % (view_cell,
                                                             edit_cell,
@@ -383,7 +373,9 @@ class RevisionsFeed(DocumentsFeed):
                          tag_diff, review_diff, content_diff, links_table])
 
     def item_link(self, item):
-        return self.request.build_absolute_uri(item.document.get_absolute_url())
+        return add_utm(
+            self.request.build_absolute_uri(item.document.get_absolute_url()),
+            'feed', medium='rss')
 
     def item_pubdate(self, item):
         return item.created
@@ -392,7 +384,9 @@ class RevisionsFeed(DocumentsFeed):
         return item.creator.username
 
     def item_author_link(self, item):
-        return self.request.build_absolute_uri(item.creator.get_absolute_url())
+        return add_utm(
+            self.request.build_absolute_uri(item.creator.get_absolute_url()),
+            'feed', medium='rss')
 
     def item_categories(self, item):
         return []

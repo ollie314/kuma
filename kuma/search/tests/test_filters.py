@@ -1,12 +1,14 @@
-from nose.tools import ok_, eq_
-
+from kuma.core.tests import eq_, ok_
 from kuma.wiki.models import Document
 from kuma.wiki.signals import render_done
+
+from django.http import QueryDict
 
 from . import ElasticTestCase
 from ..filters import (AdvancedSearchQueryBackend, DatabaseFilterBackend,
                        HighlightFilterBackend, LanguageFilterBackend,
-                       SearchQueryBackend)
+                       SearchQueryBackend, get_filters)
+from ..models import FilterGroup
 from ..views import SearchView
 
 
@@ -71,7 +73,7 @@ class FilterTests(ElasticTestCase):
 
         view = LanguageView.as_view()
         request = self.get_request('/fr/search?q=article')
-        eq_(request.locale, 'fr')
+        eq_(request.LANGUAGE_CODE, 'fr')
         response = view(request)
 
         eq_(response.data['count'], 7)
@@ -79,7 +81,7 @@ class FilterTests(ElasticTestCase):
         eq_(response.data['documents'][0]['locale'], 'fr')
 
         request = self.get_request('/en-US/search?q=article')
-        eq_(request.locale, 'en-US')
+        eq_(request.LANGUAGE_CODE, 'en-US')
         response = view(request)
         eq_(response.data['count'], 6)
         eq_(len(response.data['documents']), 6)
@@ -92,7 +94,7 @@ class FilterTests(ElasticTestCase):
 
         view = LanguageView.as_view()
         request = self.get_request('/en-US/search?q=pipe&locale=*')
-        eq_(request.locale, 'en-US')
+        eq_(request.LANGUAGE_CODE, 'en-US')
         response = view(request)
 
         eq_(response.data['count'], 1)
@@ -100,7 +102,7 @@ class FilterTests(ElasticTestCase):
         eq_(response.data['documents'][0]['locale'], 'fr')
 
         request = self.get_request('/en-US/search?q=pipe')
-        eq_(request.locale, 'en-US')
+        eq_(request.LANGUAGE_CODE, 'en-US')
         response = view(request)
         eq_(response.data['count'], 0)
         eq_(len(response.data['documents']), 0)
@@ -136,3 +138,20 @@ class FilterTests(ElasticTestCase):
         response = view(request)
         eq_(response.data['count'], 7)
         eq_(len(response.data['documents']), 7)
+
+    def test_get_filters(self):
+        FilterGroup.objects.create(
+            name='Topics',
+            slug='topic',
+            order=1)
+        qd = QueryDict('q=test&topic=css,canvas,js')
+        filters = get_filters(qd.getlist)
+        eq_(filters, [u'css,canvas,js'])
+
+        qd = QueryDict('q=test&topic=css,js&none=none')
+        filters = get_filters(qd.getlist)
+        eq_(filters, [u'none'])
+
+        qd = QueryDict('q=test&none=none')
+        filters = get_filters(qd.getlist)
+        eq_(filters, [u'none'])

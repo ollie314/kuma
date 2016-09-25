@@ -13,7 +13,7 @@ from django.core.management.base import NoArgsCommand
 from django.db import IntegrityError
 from django.utils import encoding
 
-from kuma.core.utils import file_lock
+from kuma.core.utils import memcache_lock
 from kuma.feeder.models import Feed, Entry
 
 
@@ -28,7 +28,7 @@ class Command(NoArgsCommand):
                     default=False, help='Fetch even disabled feeds.'),
     )
 
-    @file_lock('kuma_feeder')
+    @memcache_lock('kuma_feeder')
     def handle_noargs(self, **options):
         """
         Locked command handler to avoid running this command more than once
@@ -97,7 +97,7 @@ class Command(NoArgsCommand):
 
         except KeyboardInterrupt:
             raise
-        except Exception, e:
+        except Exception as e:
             log.error("General Error starting loop: %s", e)
             log.exception(e)
 
@@ -245,6 +245,6 @@ class Command(NoArgsCommand):
 
         except KeyboardInterrupt:
             raise
-        except Exception, e:
+        except Exception as e:
             log.error('General Error on %s: %s', feed.url, e)
             log.exception(e)

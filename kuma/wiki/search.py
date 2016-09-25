@@ -72,10 +72,10 @@ class WikiDocumentType(document.DocType):
             'locale': obj.locale,
             'modified': obj.modified,
             'content': strip_tags(obj.rendered_html or ''),
-            'tags': list(obj.tags.values_list('name', flat=True)),
-            'kumascript_macros': obj.extract_kumascript_macro_names(),
-            'css_classnames': obj.extract_css_classnames(),
-            'html_attributes': obj.extract_html_attributes(),
+            'tags': list(obj.tags.names()),
+            'kumascript_macros': obj.extract.macro_names(),
+            'css_classnames': obj.extract.css_classnames(),
+            'html_attributes': obj.extract.html_attributes(),
         }
 
         # Check if the document has a document zone attached
@@ -267,7 +267,7 @@ class WikiDocumentType(document.DocType):
                          for exclude in cls.exclude_slugs]))
 
     def get_excerpt(self):
-        highlighted = self.meta.get('highlight')
+        highlighted = getattr(self.meta, 'highlight', None)
         if highlighted:
             for excerpt_field in self.excerpt_fields:
                 if excerpt_field in highlighted:
@@ -308,8 +308,12 @@ class WikiDocumentType(document.DocType):
             chord_flow(pre_task, index_tasks, post_task).apply_async()
 
         message = _(
-            'Indexing {total} documents into {n} chunks of size {size} into '
-            'index {index}.'.format(total=total, n=total_chunks,
-                                    size=chunk_size,
-                                    index=index.prefixed_name))
+            'Indexing %(total)d documents into %(total_chunks)d chunks of '
+            'size %(size)d into index %(index)s.' % {
+                'total': total,
+                'total_chunks': total_chunks,
+                'size': chunk_size,
+                'index': index.prefixed_name
+            }
+        )
         return message

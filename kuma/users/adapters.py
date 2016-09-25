@@ -1,13 +1,12 @@
-from django import forms
-from django.contrib import messages
-from django.contrib.auth import get_user_model
-from django.shortcuts import redirect
-
 from allauth.account.adapter import DefaultAccountAdapter, get_adapter
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth.socialaccount.models import SocialLogin
-from tower import ugettext_lazy as _
+from django import forms
+from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.shortcuts import redirect
+from django.utils.translation import ugettext_lazy as _
 from waffle import flag_is_active
 
 from kuma.core.urlresolvers import reverse
@@ -76,9 +75,10 @@ class KumaAccountAdapter(DefaultAccountAdapter):
             # as it would be misleading
             user_url = reverse('users.user_edit',
                                kwargs={'username': request.user.username},
-                               locale=request.locale)
+                               locale=request.LANGUAGE_CODE)
+            connections_url = reverse('socialaccount_connections')
             next_url = request.session.get('sociallogin_next_url', None)
-            if next_url != user_url:
+            if next_url not in (user_url, connections_url):
                 return
 
         # and add an extra tag to the account messages
@@ -102,8 +102,22 @@ class KumaSocialAccountAdapter(DefaultSocialAccountAdapter):
         because the default adapter uses the account adpater above
         as the default.
         """
-        # Check if profile creation is disabled via waffle
-        return not flag_is_active(request, 'registration_disabled')
+        allowed = True
+        if flag_is_active(request, 'registration_disabled'):
+            allowed = False
+        elif sociallogin.account.provider == 'persona':
+            allowed = False
+            request.used_persona = True
+
+        # bug 1291892: Don't confuse next login with connecting accounts
+        if not allowed:
+            for key in ('socialaccount_sociallogin', 'sociallogin_provider'):
+                try:
+                    del request.session[key]
+                except KeyError:  # pragma: no cover
+                    pass
+
+        return allowed
 
     def validate_disconnect(self, account, accounts):
         """
@@ -146,3 +160,18 @@ class KumaSocialAccountAdapter(DefaultSocialAccountAdapter):
         request.session['sociallogin_provider'] = (sociallogin
                                                    .account.provider)
         request.session.modified = True
+
+    def save_user(self, request, sociallogin, form):
+        """
+        Update the session after creating a new user account.
+
+        If the socialaccount_sociallogin remains in the session, then the user
+        will be unable to connect a second account unless they log out and
+        log in again.
+        """
+        super(KumaSocialAccountAdapter, self).save_user(request, sociallogin,
+                                                        form)
+        try:
+            del request.session['socialaccount_sociallogin']
+        except KeyError:  # pragma: no cover
+            pass

@@ -4,15 +4,11 @@ define(['intern'], function(intern) {
     var httpsAddress = 'https://' + domain + '/';
     var defaultLocale = 'en-US';
 
-    var timeouts = 22000;
-
     return {
-
         // URLs
         domain: domain,
         url: httpsAddress,
         homepageUrl: httpsAddress + defaultLocale,
-        demosHomepageUrl: httpsAddress + defaultLocale + '/demos',
         productionDomain: 'developer.mozilla.org',
 
         // Locales
@@ -34,9 +30,9 @@ define(['intern'], function(intern) {
         personaUsername: intern.args.u || '',
         personaPassword: intern.args.p || '',
 
-        // Async testing in milliseconds
-        testTimeout: timeouts,
-        asyncExecutionTimeout: timeouts,
+        // Testing timeouts in milliseconds
+        // Set high so that remote runners like BrowserStack can complete in case of slow site
+        testTimeout: 60000,
 
         // Wiki-specific
         wikiDocumentSlug: intern.args.wd || ''

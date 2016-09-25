@@ -3,7 +3,8 @@ from __future__ import with_statement
 import json
 import logging
 import os
-from datetime import datetime
+import textwrap
+from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -13,19 +14,20 @@ from django.db import connection, transaction
 from django.template.loader import render_to_string
 from django.utils.encoding import smart_str
 
-from celery import task, chord
+from celery import chord, task
 from constance import config
+from djcelery_transactions import task as transaction_task
 from lxml import etree
 
 from kuma.core.cache import memcache
-from kuma.core.utils import chord_flow, chunked, MemcacheLock
+from kuma.core.utils import MemcacheLock, chord_flow, chunked
 from kuma.search.models import Index
 
 from .events import context_dict
 from .exceptions import PageMoveError, StaleDocumentsRenderingInProgress
-from .helpers import absolutify
-from .models import Document, Revision, RevisionIP
+from .models import Document, DocumentSpamAttempt, Revision, RevisionIP
 from .search import WikiDocumentType
+from .templatetags.jinja_helpers import absolutify
 from .utils import tidy_content
 
 
@@ -149,52 +151,60 @@ def move_page(locale, slug, new_slug, email):
         logging.error('Page move failed: no user with email address %s' %
                       email)
         return
+
     try:
         doc = Document.objects.get(locale=locale, slug=slug)
     except Document.DoesNotExist:
         transaction.rollback()
         message = """
-    Page move failed.
+            Page move failed.
 
-    Move was requested for document with slug %(slug)s in locale
-    %(locale)s, but no such document exists.
-    """ % {'slug': slug, 'locale': locale}
+            Move was requested for document with slug %(slug)s in locale
+            %(locale)s, but no such document exists.
+        """ % {'slug': slug, 'locale': locale}
         logging.error(message)
-        send_mail('Page move failed', message, settings.DEFAULT_FROM_EMAIL,
+        send_mail('Page move failed',
+                  textwrap.dedent(message),
+                  settings.DEFAULT_FROM_EMAIL,
                   [user.email])
         transaction.set_autocommit(True)
         return
+
     try:
         doc._move_tree(new_slug, user=user)
     except PageMoveError as e:
         transaction.rollback()
         message = """
-    Page move failed.
+            Page move failed.
 
-    Move was requested for document with slug %(slug)s in locale
-    %(locale)s, but could not be completed.
+            Move was requested for document with slug %(slug)s in locale
+            %(locale)s, but could not be completed.
 
-    Diagnostic info:
+            Diagnostic info:
 
-    %(message)s
-    """ % {'slug': slug, 'locale': locale, 'message': e.message}
+            %(message)s
+        """ % {'slug': slug, 'locale': locale, 'message': e.message}
         logging.error(message)
-        send_mail('Page move failed', message, settings.DEFAULT_FROM_EMAIL,
+        send_mail('Page move failed',
+                  textwrap.dedent(message),
+                  settings.DEFAULT_FROM_EMAIL,
                   [user.email])
         transaction.set_autocommit(True)
         return
     except Exception as e:
         transaction.rollback()
         message = """
-    Page move failed.
+            Page move failed.
 
-    Move was requested for document with slug %(slug)s in locale %(locale)s,
-    but could not be completed.
+            Move was requested for document with slug %(slug)s in locale %(locale)s,
+            but could not be completed.
 
-    %(info)s
-    """ % {'slug': slug, 'locale': locale, 'info': e}
+            %(info)s
+        """ % {'slug': slug, 'locale': locale, 'info': e}
         logging.error(message)
-        send_mail('Page move failed', message, settings.DEFAULT_FROM_EMAIL,
+        send_mail('Page move failed',
+                  textwrap.dedent(message),
+                  settings.DEFAULT_FROM_EMAIL,
                   [user.email])
         transaction.set_autocommit(True)
         return
@@ -207,16 +217,21 @@ def move_page(locale, slug, new_slug, email):
         moved_doc.schedule_rendering('max-age=0')
 
     subject = 'Page move completed: ' + slug + ' (' + locale + ')'
+
     full_url = settings.SITE_URL + '/' + locale + '/docs/' + new_slug
+
     message = """
-Page move completed.
+        Page move completed.
 
-The move requested for the document with slug %(slug)s in locale
-%(locale)s, and all its children, has been completed.
+        The move requested for the document with slug %(slug)s in locale
+        %(locale)s, and all its children, has been completed.
 
-You can now view this document at its new location: %(full_url)s.
+        You can now view this document at its new location: %(full_url)s.
     """ % {'slug': slug, 'locale': locale, 'full_url': full_url}
-    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL,
+
+    send_mail(subject,
+              textwrap.dedent(message),
+              settings.DEFAULT_FROM_EMAIL,
               [user.email])
 
 
@@ -267,7 +282,7 @@ def delete_old_revision_ips(days=30):
     RevisionIP.objects.delete_old(days=days)
 
 
-@task
+@transaction_task
 def send_first_edit_email(revision_pk):
     """ Make an 'edited' notification email for first-time editors """
     revision = Revision.objects.get(pk=revision_pk)
@@ -278,7 +293,7 @@ def send_first_edit_email(revision_pk):
                                context_dict(revision))
     doc_url = absolutify(doc.get_absolute_url())
     email = EmailMessage(subject, message, settings.DEFAULT_FROM_EMAIL,
-                         to=[config.EMAIL_LIST_FOR_FIRST_EDITS],
+                         to=[config.EMAIL_LIST_SPAM_WATCH],
                          headers={'X-Kuma-Document-Url': doc_url,
                                   'X-Kuma-Editor-Username': user.username})
     email.send()
@@ -368,7 +383,8 @@ def build_sitemaps():
     tasks = [build_locale_sitemap.si(locale)
              for locale in settings.MDN_LANGUAGES]
     post_task = build_index_sitemap.s()
-    chord(header=tasks, body=post_task).apply_async()
+    # we retry the chord unlock 300 times, so 5 mins with an interval of 1s
+    chord(header=tasks, body=post_task).apply_async(max_retries=300, interval=1)
 
 
 @task
@@ -425,16 +441,42 @@ def unindex_documents(ids, index_pk):
 
 
 @task(rate_limit='120/m')
-def tidy_revision_content(pk):
+def tidy_revision_content(pk, refresh=True):
     """
     Run tidy over the given revision's content and save it to the
     tidy_content field if the content is not equal to the current value.
 
     :arg pk: Primary key of `Revision` whose content needs tidying.
     """
-    revision = Revision.objects.get(pk=pk)
-    tidied_content, errors = tidy_content(revision.content)
-    if tidied_content != revision.tidied_content:
-        Revision.objects.filter(pk=pk).update(tidied_content=tidied_content)
-    # return the errors so we can look them up in the Celery task result store
-    return errors
+    try:
+        revision = Revision.objects.get(pk=pk)
+    except Revision.DoesNotExist as exc:
+        # Retry in 2 minutes
+        log.error('Tidy was unable to get revision id: %d. Retrying.', pk)
+        tidy_revision_content.retry(countdown=60 * 2, max_retries=5, exc=exc)
+    else:
+        if revision.tidied_content and not refresh:
+            return
+        tidied_content, errors = tidy_content(revision.content)
+        if tidied_content != revision.tidied_content:
+            Revision.objects.filter(pk=pk).update(
+                tidied_content=tidied_content
+            )
+        # return the errors so we can look them up in the Celery task result
+        return errors
+
+
+@task
+def delete_old_documentspamattempt_data(days=30):
+    """Delete old DocumentSpamAttempt.data, which contains PII.
+
+    Also set review to REVIEW_UNAVAILABLE.
+    """
+    older = datetime.now() - timedelta(days=30)
+    dsas = DocumentSpamAttempt.objects.filter(
+        created__lt=older).exclude(data__isnull=True)
+    dsas_reviewed = dsas.exclude(review=DocumentSpamAttempt.NEEDS_REVIEW)
+    dsas_unreviewed = dsas.filter(review=DocumentSpamAttempt.NEEDS_REVIEW)
+    dsas_reviewed.update(data=None)
+    dsas_unreviewed.update(
+        data=None, review=DocumentSpamAttempt.REVIEW_UNAVAILABLE)

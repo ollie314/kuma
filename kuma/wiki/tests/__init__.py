@@ -6,7 +6,6 @@ from django.contrib.auth.models import Group, Permission
 from django.utils.text import slugify
 
 from html5lib.filters._base import Filter as html5lib_Filter
-from nose.tools import nottest
 from waffle.models import Flag
 
 from kuma.core.tests import get_user, KumaTestCase
@@ -31,8 +30,7 @@ class WikiTestCase(KumaTestCase):
 def document(save=False, **kwargs):
     """Return an empty document with enough stuff filled out that it can be
     saved."""
-    defaults = {'category': Document.CATEGORIES[0][0],
-                'title': unicode(datetime.now()),
+    defaults = {'title': unicode(datetime.now()),
                 'is_redirect': 0}
     defaults.update(kwargs)
     if 'slug' not in kwargs:
@@ -107,15 +105,6 @@ def wait_add_rev(document):
     return document
 
 
-# I don't like this thing. revision() is more flexible. All this adds is
-# is_approved=True, but it doesn't even mention approval in its name.
-# TODO: Remove.
-def doc_rev(content=''):
-    """Save a document and an approved revision with the given content."""
-    r = revision(content=content, is_approved=True)
-    r.save()
-    return r.document, r
-
 # End model makers.
 
 
@@ -127,7 +116,6 @@ def new_document_data(tags=None):
         'tags': ', '.join(tags or []),
         'firefox_versions': [1, 2],
         'operating_systems': [1, 3],
-        'category': Document.CATEGORIES[0][0],
         'keywords': 'key1, key2',
         'summary': 'lipsum',
         'content': 'lorem ipsum dolor sit amet',
@@ -135,25 +123,54 @@ def new_document_data(tags=None):
     }
 
 
+class WhitespaceRemovalFilter(html5lib_Filter):
+    def __iter__(self):
+        for token in html5lib_Filter.__iter__(self):
+            if 'SpaceCharacters' == token['type']:
+                continue
+            yield token
+
+
 def normalize_html(input):
-    """Normalize HTML5 input, discarding parts not significant for
-    equivalence in tests"""
-
-    class WhitespaceRemovalFilter(html5lib_Filter):
-        def __iter__(self):
-            for token in html5lib_Filter.__iter__(self):
-                if 'SpaceCharacters' == token['type']:
-                    continue
-                yield token
-
+    """
+    Normalize HTML5 input, discarding parts not significant for
+    equivalence in tests
+    """
     return (kuma.wiki.content
             .parse(unicode(input))
             .filter(WhitespaceRemovalFilter)
             .serialize(alphabetical_attributes=True))
 
 
-@nottest
+def create_document_editor_group():
+    """Get or create a group that can edit documents."""
+    group, group_created = Group.objects.get_or_create(name='editor')
+    if group_created:
+        actions = ('add', 'change', 'delete', 'view', 'restore')
+        perms = [Permission.objects.get(codename='%s_document' % action)
+                 for action in actions]
+        group.permissions = perms
+        group.save()
+    return group
+
+
+def create_document_editor_user():
+    """Get or create a user empowered with document editing."""
+    User = get_user_model()
+    user, user_created = User.objects.get_or_create(
+        username='conantheeditor',
+        defaults=dict(email='user_%s@example.com',
+                      is_active=True, is_staff=False, is_superuser=False))
+    if user_created:
+        user.set_password('testpass')
+        user.groups = [create_document_editor_group()]
+        user.save()
+
+    return user
+
+
 def create_template_test_users():
+    """Create users for template editing tests."""
     perms = dict(
         (x, [Permission.objects.get(codename='%s_template_document' % x)])
         for x in ('add', 'change',)
@@ -168,6 +185,7 @@ def create_template_test_users():
             group.permissions = perms[x]
             group.save()
         groups[x] = [group]
+    editor_group = create_document_editor_group()
 
     users = {}
     User = get_user_model()
@@ -178,7 +196,7 @@ def create_template_test_users():
                           is_active=True, is_staff=False, is_superuser=False))
         if created:
             user.set_password('testpass')
-            user.groups = groups.get(x, [])
+            user.groups = groups.get(x, []) + [editor_group]
             user.save()
         users[x] = user
 
@@ -203,10 +221,18 @@ def create_topical_parents_docs():
     return d1, d2
 
 
-class FakeResponse:
-    """Quick and dirty mocking stand-in for a response object"""
-    def __init__(self, **entries):
-        self.__dict__.update(entries)
+def create_document_tree():
+    root_doc = document(title="Root", slug="Root", save=True)
+    revision(document=root_doc, title="Root", slug="Root", save=True)
+    child_doc = document(title="Child", slug="Child", save=True)
+    child_doc.parent_topic = root_doc
+    child_doc.save()
+    revision(document=child_doc, title="Child", slug="Child", save=True)
+    grandchild_doc = document(title="Grandchild", slug="Grandchild",
+                              save=True)
+    grandchild_doc.parent_topic = child_doc
+    grandchild_doc.save()
+    revision(document=grandchild_doc, title="Grandchild",
+             slug="Grandchild", save=True)
 
-    def read(self):
-        return self.text
+    return root_doc, child_doc, grandchild_doc

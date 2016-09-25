@@ -42,6 +42,7 @@ def populate(modeladmin, request, queryset):
 populate.short_description = _("Populate selected search index via Celery")
 
 
+@admin.register(Index)
 class IndexAdmin(admin.ModelAdmin):
     list_display = ('name', 'promoted', 'populated', 'current',
                     'created_at')
@@ -57,24 +58,21 @@ class IndexAdmin(admin.ModelAdmin):
     current.boolean = True
 
 
+@admin.register(FilterGroup)
 class FilterGroupAdmin(admin.ModelAdmin):
     list_display = ('name', 'order')
     list_editable = ('order',)
     ordering = ('-order', 'name')
 
 
+@admin.register(Filter)
 class FilterAdmin(admin.ModelAdmin):
-    list_display = ('name', 'slug', 'group', 'enabled')
+    list_display = ('name', 'slug', 'group', 'enabled', 'default')
     list_filter = ('group',)
     search_fields = ('name', 'slug')
-    list_editable = ('enabled',)
+    list_editable = ('enabled', 'default')
     list_select_related = True
     radio_fields = {
         'operator': admin.VERTICAL,
         'group': admin.VERTICAL,
     }
-
-
-admin.site.register(FilterGroup, FilterGroupAdmin)
-admin.site.register(Filter, FilterAdmin)
-admin.site.register(Index, IndexAdmin)

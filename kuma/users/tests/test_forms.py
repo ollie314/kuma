@@ -1,8 +1,6 @@
 from django import forms
 
-from nose.tools import eq_
-
-from kuma.core.tests import KumaTestCase
+from kuma.core.tests import KumaTestCase, eq_, ok_
 
 from . import user
 from ..adapters import (KumaAccountAdapter, USERNAME_CHARACTERS,
@@ -26,6 +24,44 @@ class TestUserEditForm(KumaTestCase):
         form = UserEditForm(data, instance=test_user2)
         eq_(False, form.is_valid())
 
+    def test_can_keep_legacy_username(self):
+        test_user = user(username='legacy@example.com', save=True)
+        ok_(test_user.has_legacy_username)
+        data = {
+            'username': 'legacy@example.com'
+        }
+        form = UserEditForm(data, instance=test_user)
+        ok_(form.is_valid(), repr(form.errors))
+
+    def test_cannot_change_legacy_username(self):
+        test_user = user(username='legacy@example.com', save=True)
+        ok_(test_user.has_legacy_username)
+        data = {
+            'username': 'mr.legacy@example.com'
+        }
+        form = UserEditForm(data, instance=test_user)
+        eq_(form.is_valid(), False)
+        eq_(form.errors, {'username': [USERNAME_CHARACTERS]})
+
+    def test_cannot_change_to_legacy_username(self):
+        test_user = user(save=True)
+        eq_(test_user.has_legacy_username, False)
+        data = {
+            'username': 'mr.legacy@example.com'
+        }
+        form = UserEditForm(data, instance=test_user)
+        eq_(form.is_valid(), False)
+        eq_(form.errors, {'username': [USERNAME_CHARACTERS]})
+
+    def test_blank_username_invalid(self):
+        test_user = user(save=True)
+        data = {
+            'username': '',
+        }
+        form = UserEditForm(data, instance=test_user)
+        eq_(form.is_valid(), False)
+        eq_(form.errors, {'username': ['This field cannot be blank.']})
+
     def test_https_user_urls(self):
         """bug 733610: User URLs should allow https"""
         protos = (
@@ -35,7 +71,6 @@ class TestUserEditForm(KumaTestCase):
             ('https://', True),
         )
         sites = (
-            ('website', 'mozilla.org'),
             ('twitter', 'twitter.com/lmorchard'),
             ('github', 'github.com/lmorchard'),
             ('stackoverflow', 'stackoverflow.com/users/testuser'),
@@ -65,6 +100,7 @@ class TestUserEditForm(KumaTestCase):
             for name, site in sites:
                 url = '%s%s' % (proto, site)
                 data = {
+                    'username': edit_user.username,
                     'email': 'lorchard@mozilla.com',
                     '%s_url' % name: url,
                 }

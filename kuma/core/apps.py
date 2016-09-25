@@ -1,5 +1,5 @@
-from django.conf import settings
 from django.apps import AppConfig
+from django.conf import settings
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
@@ -17,6 +17,5 @@ class CoreConfig(AppConfig):
         """
         a static mapping of lower case language names and their native names
         """
-        from product_details import product_details
-        return dict([(lang.lower(), product_details.languages[lang]['native'])
-                     for lang in settings.MDN_LANGUAGES])
+        return {lang.lower(): settings.LOCALES[lang].native
+                for lang in settings.MDN_LANGUAGES}

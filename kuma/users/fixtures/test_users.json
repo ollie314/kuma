@@ -13,8 +13,8 @@
         "fields": {
             "name": "template-editors",
             "permissions": [
-                118,
-                119
+                ["add_template_document", "wiki", "document"],
+                ["change_template_document", "wiki", "document"]
             ]
         },
         "model": "auth.group",
@@ -22,10 +22,28 @@
     },
     {
         "fields": {
+            "name": "Page Creators",
+            "permissions": [
+                ["add_document", "wiki", "document"]
+            ]
+        },
+        "model": "auth.group",
+        "pk": 2
+    },
+    {
+        "fields": {
+            "name": "Known Authors",
+            "permissions": []
+        },
+        "model": "auth.group",
+        "pk": 4
+    },
+    {
+        "fields": {
             "date_joined": "2011-06-03 16:12:08",
             "email": "testuser@test.com",
             "first_name": "Test",
-            "groups": [],
+            "groups": [2],
             "is_active": true,
             "is_staff": false,
             "is_superuser": false,
@@ -35,7 +53,6 @@
             "user_permissions": [],
             "username": "testuser",
             "bio": "I like to test things.",
-            "content_flagging_email": false,
             "fullname": "Test User",
             "homepage": "http://testuser.com/",
             "irc_nickname": "testuser",
@@ -80,7 +97,7 @@
             "date_joined": "2011-06-03 16:12:08",
             "email": "testuser2@test.com",
             "first_name": "Test2",
-            "groups": [],
+            "groups": [2],
             "is_active": true,
             "is_staff": false,
             "is_superuser": false,
@@ -90,7 +107,6 @@
             "user_permissions": [],
             "username": "testuser2",
             "bio": "I like to test things.2",
-            "content_flagging_email": false,
             "fullname": "Test User2",
             "homepage": "http://testuser2.com/",
             "irc_nickname": "testuser2",
@@ -166,7 +182,7 @@
             "date_joined": "2011-06-03 16:12:08",
             "email": "testuser01@test.com",
             "first_name": "Test",
-            "groups": [],
+            "groups": [2, 4],
             "is_active": true,
             "is_staff": false,
             "is_superuser": false,
@@ -176,7 +192,6 @@
             "user_permissions": [],
             "username": "testuser01",
             "bio": "I like to test things.01",
-            "content_flagging_email": false,
             "fullname": "Test User01",
             "homepage": "http://testuser01.com/",
             "irc_nickname": "testuser01",
@@ -202,7 +217,6 @@
             "password": "sha1$015f3$d7a6885afbb3e3ae453f1c68ab205fa0a24c3488",
             "user_permissions": [],
             "username": "admin",
-            "content_flagging_email": false,
             "homepage": "http://adminuser.com/",
             "location": "Adminville",
             "timezone": "Asia/Kolkata"

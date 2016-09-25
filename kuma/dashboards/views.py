@@ -2,15 +2,20 @@ import datetime
 import json
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import permission_required
+from django.contrib.auth.models import Group
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from django.views.decorators.http import require_GET
+import waffle
 
-from kuma.wiki.models import Document, Revision
+from kuma.core.decorators import login_required
 from kuma.core.utils import paginate
+from kuma.wiki.models import Document, Revision
 
 from .forms import RevisionDashboardForm
+from .jobs import SpamDashboardHistoricalStats
 from . import PAGE_SIZE
 
 
@@ -21,15 +26,19 @@ def revisions(request):
     filter_form = RevisionDashboardForm(request.GET)
     page = request.GET.get('page', 1)
 
-    revisions = (Revision.objects.select_related('creator')
-                                 .order_by('-created')
+    revisions = (Revision.objects.prefetch_related('creator__bans',
+                                                   'document',
+                                                   'akismet_submissions')
+                                 .order_by('-id')
                                  .defer('content'))
 
     query_kwargs = False
+    exclude_kwargs = False
 
     # We can validate right away because no field is required
     if filter_form.is_valid():
         query_kwargs = {}
+        exclude_kwargs = {}
         query_kwargs_map = {
             'user': 'creator__username__istartswith',
             'locale': 'document__locale',
@@ -67,22 +76,40 @@ def revisions(request):
             start_date = end_date - datetime.timedelta(seconds=seconds)
             query_kwargs['created__range'] = [start_date, end_date]
 
-    if query_kwargs:
-        revisions = revisions.filter(**query_kwargs)
-        total = revisions.count()
-    else:
-        # If no filters, just do a straight count(). It's the same
-        # result, but much faster to compute.
-        total = Revision.objects.count()
+        authors_filter = filter_form.cleaned_data['authors']
+        if (not filter_form.cleaned_data['user'] != '' and
+           authors_filter not in ['', str(RevisionDashboardForm.ALL_AUTHORS)]):
 
-    # Only bother with this if we're actually going to get
-    # some revisions from it. Otherwise it's a pointless but
-    # potentially complex query.
+            # The 'Known Authors' group
+            group, created = Group.objects.get_or_create(name="Known Authors")
+            # If the filter is 'Known Authors', then query for the
+            # 'Known Authors' group
+            if authors_filter == str(RevisionDashboardForm.KNOWN_AUTHORS):
+                query_kwargs['creator__groups__pk'] = group.pk
+            # Else query must be 'Unknown Authors', so exclude the
+            # 'Known Authors' group
+            else:
+                exclude_kwargs['creator__groups__pk'] = group.pk
+
+    if query_kwargs or exclude_kwargs:
+        revisions = revisions.filter(**query_kwargs).exclude(**exclude_kwargs)
+
     revisions = paginate(request, revisions, per_page=PAGE_SIZE)
 
-    context = {'revisions': revisions, 'page': page, 'total': total}
+    context = {
+        'revisions': revisions,
+        'page': page,
+        'show_ips': (
+            waffle.switch_is_active('store_revision_ips') and
+            request.user.is_superuser
+        ),
+        'show_spam_submission': (
+            request.user.is_authenticated() and
+            request.user.has_perm('wiki.add_revisionakismetsubmission')
+        ),
+    }
 
-    # Serve the response HTML conditionally upon reques type
+    # Serve the response HTML conditionally upon request type
     if request.is_ajax():
         template = 'dashboards/includes/revision_dashboard_body.html'
     else:
@@ -123,3 +150,22 @@ def topic_lookup(request):
     data = json.dumps(topiclist)
     return HttpResponse(data,
                         content_type='application/json; charset=utf-8')
+
+
+@require_GET
+@login_required
+@permission_required((
+    'wiki.add_revisionakismetsubmission',
+    'wiki.add_documentspamattempt',
+    'users.add_userban'), raise_exception=True)
+def spam(request):
+    """Dashboard for spam moderators."""
+
+    # Combine data sources
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    data = SpamDashboardHistoricalStats().get(yesterday)
+
+    if not data:
+        return render(request, 'dashboards/spam.html', {'processing': True})
+
+    return render(request, 'dashboards/spam.html', data)

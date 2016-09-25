@@ -2,12 +2,12 @@
 
 # RabbitMQ official install
 - name: "add the official rabbitmq repository's key"
-  apt_key: url=https://www.rabbitmq.com/rabbitmq-signing-key-public.asc
+  apt_key: url=https://www.rabbitmq.com/rabbitmq-release-signing-key.asc
   when: not rabbitmq_os_package
 
 - name: add the official rabbitmq repository
   copy:
-    src=../../files/rabbitmq.list
+    src={{ role_path }}/files/rabbitmq.list
     dest=/etc/apt/sources.list.d/
     backup=yes
   register: aptrepo

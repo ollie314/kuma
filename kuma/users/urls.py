@@ -5,6 +5,7 @@ from django.conf.urls import include, url
 from allauth.account import views as account_views
 from allauth.socialaccount import providers, views as socialaccount_views
 
+from kuma.core.decorators import never_cache
 from . import views
 
 
@@ -19,7 +20,7 @@ account_patterns = [
         views.signup,
         name='socialaccount_signup'),
     url(r'^connections/?$',
-        socialaccount_views.connections,
+        never_cache(socialaccount_views.connections),
         name='socialaccount_connections'),
     url(r'^inactive/?$',
         account_views.account_inactive,
@@ -49,9 +50,15 @@ users_patterns = [
         account_views.logout,
         name='account_logout'),
     url(r'^account/', include(account_patterns)),
-    url(r'^ban/(?P<user_id>\d+)$',
+    url(r'^ban/(?P<username>[^/]+)$',
         views.ban_user,
         name='users.ban_user'),
+    url(r'^ban_user_and_cleanup/(?P<username>[^/]+)$',
+        views.ban_user_and_cleanup,
+        name='users.ban_user_and_cleanup'),
+    url(r'^ban_user_and_cleanup_summary/(?P<username>[^/]+)$',
+        views.ban_user_and_cleanup_summary,
+        name='users.ban_user_and_cleanup_summary'),
 ]
 
 
@@ -78,8 +85,5 @@ urlpatterns = [
     url(r'^profile/edit/?$',
         views.my_edit_page,
         name='users.my_edit_page'),
-    url(r'^newsletter/?$',
-        views.apps_newsletter,
-        name='users.apps_newsletter'),
     url(r'^users/', include(users_patterns)),
 ]

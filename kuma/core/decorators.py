@@ -1,12 +1,11 @@
 from functools import wraps
-import inspect
+import re
 
+from django.conf import settings
 from django.contrib.auth import REDIRECT_FIELD_NAME
 from django.contrib.auth.decorators import user_passes_test
 from django.core.exceptions import PermissionDenied
-from django.db.models import Model, get_model
 from django.http import HttpResponseForbidden, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.utils.decorators import available_attrs
 from django.utils.http import urlquote
 
@@ -90,30 +89,12 @@ def permission_required(perm, login_url=None, redirect=REDIRECT_FIELD_NAME,
                                  deny_func=deny_func)
 
 
-def _resolve_lookup((model, lookup, arg_name), view_kwargs):
-    """Return the object indicated by the lookup triple and the kwargs passed
-    to the view.
-
-    """
-    value = view_kwargs.get(arg_name)
-    if value is None:
-        raise ValueError("Expected kwarg '%s' not found." % arg_name)
-    if isinstance(model, basestring):
-        model_class = get_model(*model.split('.'))
-    else:
-        model_class = model
-    if model_class is None:
-        raise ValueError("The given argument '%s' is not a valid model." %
-                         model)
-    if inspect.isclass(model_class) and not issubclass(model_class, Model):
-        raise ValueError("The argument '%s' needs to be a model." % model)
-    return get_object_or_404(model_class, **{lookup: value})
-
-
 # django never_cache isn't as thorough as we might like
 # http://stackoverflow.com/a/2095648/571420
 # http://stackoverflow.com/a/2068407/571420
 # https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching_FAQ
+# Fixed in Django 1.9:
+# https://docs.djangoproject.com/en/1.9/topics/http/decorators/#caching
 def never_cache(view_func):
     def _wrapped_view_func(request, *args, **kwargs):
         resp = view_func(request, *args, **kwargs)
@@ -136,3 +117,21 @@ def is_superuser(u):
 
 superuser_required = user_passes_test(is_superuser)
 #: A decorator to use for requiring a superuser
+
+
+def block_user_agents(view_func):
+    blockable_user_agents = getattr(settings, 'BLOCKABLE_USER_AGENTS', [])
+    blockable_ua_patterns = []
+    for agent in blockable_user_agents:
+        blockable_ua_patterns.append(re.compile(agent))
+
+    def agent_blocked_view(request, *args, **kwargs):
+        http_user_agent = request.META.get('HTTP_USER_AGENT', None)
+        if http_user_agent is not None:
+            for pattern in blockable_ua_patterns:
+                if pattern.search(request.META['HTTP_USER_AGENT']):
+                    return HttpResponseForbidden()
+        return view_func(request, *args, **kwargs)
+
+    return wraps(view_func,
+                 assigned=available_attrs(view_func))(agent_blocked_view)

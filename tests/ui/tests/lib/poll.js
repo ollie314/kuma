@@ -1,22 +1,20 @@
-define(['intern/dojo/Deferred', 'base/lib/config'], function(Deferred, config) {
+define(['intern/dojo/Promise', 'base/lib/config'], function(Promise, config) {
 
     return {
-        until: function(item, fn, callbackFn, timeout) {
+        until: function(item, fn, callbackFn) {
             // Allows us to poll for a remote.{whatever}() method async result
             // Useful when waiting for an element to fade in, a URL to change, etc.
 
             // Defaults for arguments not passed
-            timeout = timeout || config.testTimeout;
             callbackFn = callbackFn || function(result) {
                 return result === true;
             };
 
-            var dfd = new Deferred();
-            var endTime = Number(new Date()) + timeout;
+            var dfd = new Promise.Deferred();
+            var endTime = Number(new Date()) + config.testTimeout;
 
             (function poll() {
                 item[fn]().then(function() {
-
                     if(callbackFn.apply(this, arguments)) {
                         dfd.resolve();
                     }

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block site_css %}
+    {{ super() }}
+    {% stylesheet 'wiki' %}
+{% endblock %}
+
+{% block site_js %}
+    {{ super() }}
+    {% javascript 'wiki' %}
+{% endblock %}

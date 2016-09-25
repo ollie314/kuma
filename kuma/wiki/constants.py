@@ -1,7 +1,9 @@
 import re
 
 import bleach
-from tower import ugettext_lazy as _lazy
+from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
+
 
 ALLOWED_TAGS = bleach.ALLOWED_TAGS + [
     'div', 'span', 'p', 'br', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
@@ -17,8 +19,8 @@ ALLOWED_TAGS = bleach.ALLOWED_TAGS + [
     'section', 'header', 'footer', 'nav', 'article', 'aside', 'figure',
     'figcaption',
     'dialog', 'hgroup', 'mark', 'time', 'meter', 'command', 'output',
-    'progress', 'audio', 'video', 'details', 'datagrid', 'datalist', 'table',
-    'address', 'font',
+    'progress', 'audio', 'video', 'details', 'summary', 'datagrid', 'datalist',
+    'table', 'address', 'font',
     'bdi', 'bdo', 'del', 'ins', 'kbd', 'samp', 'var',
     'ruby', 'rp', 'rt', 'q',
     # MathML
@@ -51,6 +53,7 @@ ALLOWED_ATTRIBUTES['th'] = ['style', 'id', 'class', 'colspan', 'rowspan',
 ALLOWED_ATTRIBUTES['video'] = ['style', 'id', 'class', 'lang', 'src',
                                'controls', 'dir']
 ALLOWED_ATTRIBUTES['font'] = ['color', 'face', 'size', 'dir']
+ALLOWED_ATTRIBUTES['details'] = ['open']
 ALLOWED_ATTRIBUTES['select'] = ['name', 'dir']
 ALLOWED_ATTRIBUTES['option'] = ['value', 'selected', 'dir']
 ALLOWED_ATTRIBUTES['ol'] = ['style', 'class', 'id', 'lang', 'start', 'dir']
@@ -73,6 +76,8 @@ ALLOWED_ATTRIBUTES['li'] += ['data-default-state']
 ALLOWED_ATTRIBUTES['time'] += ['datetime']
 ALLOWED_ATTRIBUTES['ins'] = ['datetime']
 ALLOWED_ATTRIBUTES['del'] = ['datetime']
+ALLOWED_ATTRIBUTES['meter'] += ['max', 'min', 'value', 'low', 'high', 'optimum',
+                                'form']
 # MathML
 ALLOWED_ATTRIBUTES.update(dict((x, ['encoding', 'src']) for x in (
     'annotation', 'annotation-xml')))
@@ -104,7 +109,7 @@ ALLOWED_ATTRIBUTES['mfenced'] += ['close', 'open', 'separators']
 ALLOWED_ATTRIBUTES['mfrac'] += ['bevelled', 'denomalign', 'linethickness',
                                 'numalign']
 ALLOWED_ATTRIBUTES['mi'] += ['dir', 'mathsize', 'mathvariant']
-ALLOWED_ATTRIBUTES['mi'] += ['mathsize', 'mathvariant']
+ALLOWED_ATTRIBUTES['mn'] += ['dir', 'mathsize', 'mathvariant']
 ALLOWED_ATTRIBUTES['mmultiscripts'] += ['subscriptshift', 'superscriptshift']
 ALLOWED_ATTRIBUTES['mo'] += ['largeop', 'lspace', 'maxsize', 'minsize',
                              'movablelimits', 'rspace', 'separator',
@@ -197,40 +202,45 @@ KUMASCRIPT_TIMEOUT_ERROR = [
      "message": "Request to Kumascript service timed out",
      "args": ["TimeoutError"]}
 ]
-SLUG_CLEANSING_REGEX = '^\/?(([A-z-]+)?\/?docs\/)?'
 
 # TODO: Put this under the control of Constance / Waffle?
 # Flags used to signify revisions in need of review
 REVIEW_FLAG_TAGS = (
-    ('technical', _lazy('Technical - code samples, APIs, or technologies')),
-    ('editorial', _lazy('Editorial - prose, grammar, or content')),
+    ('technical', _('Technical - code samples, APIs, or technologies')),
+    ('editorial', _('Editorial - prose, grammar, or content')),
 )
 REVIEW_FLAG_TAGS_DEFAULT = ['technical', 'editorial']
 
 LOCALIZATION_FLAG_TAGS = (
-    ('inprogress', _lazy('Localization in progress - not completely translated yet.')),
+    ('inprogress', _('Localization in progress - not completely translated yet.')),
 )
 
 # TODO: This is info derived from urls.py, but unsure how to DRY it
 RESERVED_SLUGS = (
-    'ckeditor_config.js$',
-    'watch-ready-for-review$',
-    'unwatch-ready-for-review$',
-    'watch-approved$',
-    'unwatch-approved$',
-    '.json$',
-    'new$',
-    'all$',
-    'templates$',
-    'preview-wiki-content$',
-    'category/\d+$',
-    'needs-review/?[^/]+$',
-    'needs-review/?',
-    'feeds/[^/]+/all/?',
-    'feeds/[^/]+/needs-review/[^/]+$',
-    'feeds/[^/]+/needs-review/?',
-    'tag/[^/]+'
+    r'ckeditor_config\.js$',
+    r'watch-ready-for-review$',
+    r'unwatch-ready-for-review$',
+    r'watch-approved$',
+    r'unwatch-approved$',
+    r'\.json$',
+    r'new$',
+    r'all$',
+    r'templates$',
+    r'preview-wiki-content$',
+    r'category/\d+$',
+    r'needs-review/?[^/]+$',
+    r'needs-review/?',
+    r'feeds/[^/]+/all/?',
+    r'feeds/[^/]+/needs-review/[^/]+$',
+    r'feeds/[^/]+/needs-review/?',
+    r'tag/[^/]+'
 )
+RESERVED_SLUGS_RES = [re.compile(pattern) for pattern in RESERVED_SLUGS]
+SLUG_CLEANSING_RE = re.compile(r'^\/?(([A-z-]+)?\/?docs\/)?')
+# ?, whitespace, percentage, quote disallowed in slugs altogether
+INVALID_DOC_SLUG_CHARS_RE = re.compile(r"""[\s'"%%\?\$]+""")
+INVALID_REV_SLUG_CHARS_RE = re.compile(r"""[\s\?\/%%]+""")
+DOCUMENT_PATH_RE = re.compile(r'[^\$]+')
 
 # how a redirect looks as rendered HTML
 REDIRECT_HTML = 'REDIRECT <a class="redirect"'
@@ -239,4 +249,33 @@ REDIRECT_CONTENT = 'REDIRECT <a class="redirect" href="%(href)s">%(title)s</a>'
 DOCUMENT_LAST_MODIFIED_CACHE_KEY_TMPL = u'kuma:document-last-modified:%s'
 
 DEKI_FILE_URL = re.compile(r'@api/deki/files/(?P<file_id>\d+)/=')
-KUMA_FILE_URL = re.compile(r'/files/(?P<file_id>\d+)/.+\..+')
+KUMA_FILE_URL = re.compile(r'%s%s/files/(?P<file_id>\d+)/' %
+                           (re.escape(settings.PROTOCOL),
+                            re.escape(settings.ATTACHMENT_HOST)))
+
+SPAM_EXEMPTED_FLAG = 'wiki_spam_exempted'
+SPAM_TRAINING_FLAG = 'wiki_spam_training'
+SPAM_SUBMISSION_REVISION_FIELDS = [
+    'title',
+    'slug',
+    'summary',
+    'content',
+    'comment',
+    'tags',
+    'keywords',
+]
+SPAM_OTHER_HEADERS = (  # Header to send that don't start with HTTP
+    'REMOTE_ADDR',
+    'REQUEST_URI',
+    'DOCUMENT_URI',
+)
+
+CODE_SAMPLE_MACROS = [
+    'LiveSampleURL',
+    'EmbedDistLiveSample',
+    'EmbedLiveSample',
+    'LiveSampleLink',
+    'FXOSUXLiveSampleEmbed',
+]
+
+DEV_DOC_REQUEST_FORM = 'https://bugzilla.mozilla.org/form.doc'

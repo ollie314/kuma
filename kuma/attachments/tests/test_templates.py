@@ -1,30 +1,32 @@
-from nose.plugins.attrib import attr
-from nose.tools import eq_, ok_
+import pytest
+from constance import config
 from pyquery import PyQuery as pq
 
-from constance import config
-from django.conf import settings
-
-from kuma.users.tests import UserTestCase
-from kuma.wiki.tests import revision, WikiTestCase
 from kuma.core.urlresolvers import reverse
+from kuma.users.tests import UserTestCase
+from kuma.wiki.tests import document, revision, WikiTestCase
 
 from ..models import Attachment
-from ..utils import make_test_file
+from . import make_test_file
 
 
-class AttachmentTests(UserTestCase, WikiTestCase):
+class AttachmentTemplatesTests(UserTestCase, WikiTestCase):
 
     def setUp(self):
-        super(AttachmentTests, self).setUp()
+        super(AttachmentTemplatesTests, self).setUp()
         self.old_allowed_types = config.WIKI_ATTACHMENT_ALLOWED_TYPES
         config.WIKI_ATTACHMENT_ALLOWED_TYPES = 'text/plain'
+        self.client.login(username='admin', password='testpass')
+        self.document = document(save=True)
+        self.files_url = reverse('attachments.edit_attachment',
+                                 kwargs={'document_path': self.document.slug},
+                                 locale='en-US')
 
     def tearDown(self):
-        super(AttachmentTests, self).tearDown()
+        super(AttachmentTemplatesTests, self).tearDown()
         config.WIKI_ATTACHMENT_ALLOWED_TYPES = self.old_allowed_types
 
-    @attr('security')
+    @pytest.mark.security
     def test_xss_file_attachment_title(self):
         title = '"><img src=x onerror=prompt(navigator.userAgent);>'
         # use view to create new attachment
@@ -36,21 +38,27 @@ class AttachmentTests(UserTestCase, WikiTestCase):
             'file': file_for_upload,
         }
         self.client.login(username='admin', password='testpass')
-        resp = self.client.post(reverse('attachments.new_attachment'),
-                                data=post_data)
-        eq_(302, resp.status_code)
+        response = self.client.post(self.files_url, data=post_data)
+        self.assertEqual(response.status_code, 302)
 
         # now stick it in/on a document
         attachment = Attachment.objects.get(title=title)
         rev = revision(content='<img src="%s" />' % attachment.get_file_url(),
+                       document=self.document,
                        save=True)
 
         # view it and verify markup is escaped
-        response = self.client.get(reverse('wiki.edit_document', args=(rev.slug,),
-                                           locale=settings.WIKI_DEFAULT_LANGUAGE))
-        eq_(200, response.status_code)
+        response = self.client.get(rev.document.get_edit_url())
+        self.assertEqual(response.status_code, 200)
         doc = pq(response.content)
-        eq_('%s xss' % title,
-            doc('#page-attachments-table .attachment-name-cell').text())
-        ok_('&gt;&lt;img src=x onerror=prompt(navigator.userAgent);&gt;' in
-            doc('#page-attachments-table .attachment-name-cell').html())
+        self.assertEqual(
+            '%s xss' % title,
+            doc('.page-attachments-table .attachment-name-cell').text()
+        )
+        self.assertIn(
+            '&gt;&lt;img src=x onerror=prompt(navigator.userAgent);&gt;',
+            doc('.page-attachments-table .attachment-name-cell').html()
+        )
+        # security bug 1272791
+        for script in doc('script'):
+            self.assertNotIn(title, script.text_content())

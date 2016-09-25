@@ -1,10 +1,4 @@
 ---
-- name: Update product details
-  command: /home/vagrant/env/bin/python manage.py update_product_details
-  args:
-    chdir: /home/vagrant/src
-    creates: /home/vagrant/product_details_json/firefox_versions.json
-
 - name: Run Django database migrations
   command: /home/vagrant/env/bin/python manage.py migrate --noinput
   args:
@@ -28,3 +22,13 @@
   args:
     chdir: /home/vagrant/src
   when: feeder_table_empty|success
+
+- name: Compile locale .mo files
+  command: ./compile-mo.sh .
+  args:
+    chdir: /home/vagrant/src/locale
+
+- name: Compile jsi18n files
+  command: /home/vagrant/env/bin/python manage.py compilejsi18n
+  args:
+    chdir: /home/vagrant/src

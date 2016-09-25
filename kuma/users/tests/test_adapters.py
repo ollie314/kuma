@@ -1,14 +1,13 @@
-from nose.plugins.attrib import attr
-from nose.tools import eq_, ok_
-
 from django.contrib import messages as django_messages
 from django.test import RequestFactory
 
 from allauth.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.models import SocialLogin, SocialAccount
 
+from kuma.core.tests import eq_
 from kuma.core.urlresolvers import reverse
 from kuma.users.adapters import KumaSocialAccountAdapter, KumaAccountAdapter
+
 
 from . import UserTestCase
 
@@ -21,7 +20,6 @@ class KumaSocialAccountAdapterTestCase(UserTestCase):
         super(KumaSocialAccountAdapterTestCase, self).setUp()
         self.adapter = KumaSocialAccountAdapter()
 
-    @attr('bug1055870')
     def test_pre_social_login_overwrites_session_var(self):
         """ https://bugzil.la/1055870 """
         # Set up a pre-existing GitHub sign-in session
@@ -43,7 +41,6 @@ class KumaSocialAccountAdapterTestCase(UserTestCase):
             "receiver should have over-written sociallogin_provider "
             "session variable")
 
-    @attr('bug1063830')
     def test_pre_social_login_error_for_unmatched_login(self):
         """ https://bugzil.la/1063830 """
 
@@ -71,50 +68,125 @@ class KumaSocialAccountAdapterTestCase(UserTestCase):
         eq_(len(queued_messages), 1)
         eq_(django_messages.ERROR, queued_messages[0].level)
 
+    def test_pre_social_login_matched_login(self):
+        """
+        https://bugzil.la/1063830, happy path
+
+        A user tries to sign in with GitHub, but their GitHub email matches
+        an existing Persona-backed MDN account. They follow the prompt to login
+        with Persona, and the accounts are connected.
+        """
+
+        # Set up a GitHub SocialLogin in the session
+        github_account = SocialAccount.objects.get(user__username='testuser2')
+        github_login = SocialLogin(account=github_account,
+                                   user=github_account.user)
+
+        request = self.rf.get('/')
+        session = self.client.session
+        session['sociallogin_provider'] = 'github'
+        session['socialaccount_sociallogin'] = github_login.serialize()
+        session.save()
+        request.session = session
+
+        # Set up an matching Persona SocialLogin for request
+        persona_account = SocialAccount.objects.create(
+            user=github_account.user,
+            provider='persona',
+            uid=github_account.user.email)
+        persona_login = SocialLogin(account=persona_account)
+
+        # Verify the social_login receiver over-writes the provider
+        # stored in the session
+        self.adapter.pre_social_login(request, persona_login)
+        session = request.session
+        eq_(session['sociallogin_provider'], 'persona')
+
+    def test_pre_social_login_same_provider(self):
+        """
+        pre_social_login passes if existing provider is the same.
+
+        I'm not sure what the real-world counterpart of this is. Logging
+        in with a different GitHub account? Needed for branch coverage.
+        """
+
+        # Set up a GitHub SocialLogin in the session
+        github_account = SocialAccount.objects.get(user__username='testuser2')
+        github_login = SocialLogin(account=github_account,
+                                   user=github_account.user)
+
+        request = self.rf.get('/')
+        session = self.client.session
+        session['sociallogin_provider'] = 'github'
+        session['socialaccount_sociallogin'] = github_login.serialize()
+        session.save()
+        request.session = session
+
+        # Set up an un-matching GitHub SocialLogin for request
+        github2_account = SocialAccount(user=self.user_model(),
+                                        provider='github',
+                                        uid=github_account.uid + '2')
+        github2_login = SocialLogin(account=github2_account)
+
+        self.adapter.pre_social_login(request, github2_login)
+        eq_(request.session['sociallogin_provider'], 'github')
+
 
 class KumaAccountAdapterTestCase(UserTestCase):
     localizing_client = True
     rf = RequestFactory()
+    message_template = 'socialaccount/messages/account_connected.txt'
 
     def setUp(self):
         """ extra setUp to make a working session """
         super(KumaAccountAdapterTestCase, self).setUp()
         self.adapter = KumaAccountAdapter()
+        self.user = self.user_model.objects.get(username='testuser')
 
-    @attr('bug1054461')
-    def test_account_connected_message(self):
-        """ https://bugzil.la/1054461 """
-        message_template = 'socialaccount/messages/account_connected.txt'
+    def test_account_connected_message(
+            self, next_url='/', has_message=False, extra_tags=''):
+        """
+        Test that the account connection message depends on the next URL.
+
+        https://bugzil.la/1054461
+        """
         request = self.rf.get('/')
-
-        # first check for the case in which the next url in the account
-        # connection process is the frontpage, there shouldn't be a message
+        request.user = self.user
         session = self.client.session
-        session['sociallogin_next_url'] = '/'
-        session.save()
-        request.session = session
-        request.user = self.user_model.objects.get(username='testuser')
-        request.locale = 'en-US'
-        messages = self.get_messages(request)
-
-        self.adapter.add_message(request, django_messages.INFO,
-                                 message_template)
-        eq_(len(messages), 0)
-
-        # secondly check for the case in which the next url in the connection
-        # process is the profile edit page, there should be a message
-        session = self.client.session
-        next_url = reverse('users.user_edit',
-                           kwargs={'username': request.user.username},
-                           locale=request.locale)
         session['sociallogin_next_url'] = next_url
         session.save()
         request.session = session
+        request.LANGUAGE_CODE = 'en-US'
         messages = self.get_messages(request)
-
         self.adapter.add_message(request, django_messages.INFO,
-                                 message_template)
+                                 self.message_template, extra_tags=extra_tags)
+
         queued_messages = list(messages)
-        eq_(len(queued_messages), 1)
-        eq_(django_messages.SUCCESS, queued_messages[0].level)
-        ok_('connected' in queued_messages[0].message)
+        if has_message:
+            assert len(queued_messages) == 1
+            message_data = queued_messages[0]
+            assert message_data.level == django_messages.SUCCESS
+            assert 'connected' in message_data.message
+        else:
+            assert not queued_messages
+        return queued_messages
+
+    def test_account_connected_message_user_edit(self):
+        """Connection message appears if the profile edit is the next page."""
+        next_url = reverse('users.user_edit',
+                           kwargs={'username': self.user.username},
+                           locale='en-US')
+        messages = self.test_account_connected_message(next_url, True)
+        assert messages[0].tags == 'account success'
+
+    def test_account_connected_message_connection_page(self):
+        """Message appears on the connections page (bug 1229906)."""
+        next_url = reverse('socialaccount_connections')
+        self.test_account_connected_message(next_url, True)
+
+    def test_extra_tags(self):
+        """Extra tags can be added to the message."""
+        next_url = reverse('socialaccount_connections')
+        messages = self.test_account_connected_message(next_url, True,
+                                                       extra_tags='congrats')
+        assert messages[0].tags == 'congrats account success'

@@ -37,19 +37,19 @@ define([
             var term = 'Hello';
 
             return remote
-                        .findByCssSelector('#' + Page.searchBoxId)
-                        .click()
-                        .type(term)
-                        .getProperty('value')
-                        .then(function(resultText) {
-                            assert.ok(resultText.indexOf(term) > -1, term + ' is found in box');
-                        })
-                        .type(keys.RETURN)
-                        .then(function() {
-                            return poll.untilUrlChanges(remote, '/search').then(function() {
-                                assert.ok('Pressing [ENTER] submits search');
-                            });
+                    .findByCssSelector('#' + Page.searchBoxId)
+                    .click()
+                    .type(term)
+                    .getProperty('value')
+                    .then(function(resultText) {
+                        assert.ok(resultText.indexOf(term) > -1, term + ' is found in box');
+                    })
+                    .type(keys.RETURN)
+                    .then(function() {
+                        return poll.untilUrlChanges(remote, '/search').then(function() {
+                            assert.ok('Pressing [ENTER] submits search');
                         });
+                    });
         },
 
         'Hacks posts display properly': function() {
@@ -57,17 +57,7 @@ define([
             return this.remote
                         .findAllByCssSelector('.home-hacks .entry-title')
                         .then(function(arr) {
-                            assert.ok(arr.length > 0, 'If this fails, Hacks posts are not displaying on the homepage');
-                        });
-
-        },
-
-        'Demo slider displays properly': function() {
-
-            return this.remote
-                        .findAllByCssSelector('.owl-item')
-                        .then(function(arr) {
-                            assert.ok(arr.length > 0, 'If this fails, you may need to upload featured demos via the demo studio to ensure this works');
+                            assert.ok(arr.length, 'If this fails, Hacks posts are not displaying on the homepage');
                         });
 
         },
@@ -75,14 +65,7 @@ define([
         'Large search field does not display on mobile and lower': function() {
             // Starting with a "getWindowSize" to do cleanup on this test's resize to mobile
 
-            var remote = this.remote;
-            var windowSize;
-
-            return remote
-                        .getWindowSize()
-                        .then(function(size) {
-                            windowSize = size;
-                        })
+            return this.remote
                         .setWindowSize(config.mediaQueries.mobile, 400)
                         .findByCssSelector('#' + Page.searchBoxId)
                         .isDisplayed()

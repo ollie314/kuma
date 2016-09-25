@@ -1,10 +1,8 @@
 import collections
 
 from django.conf import settings
-
 from elasticsearch_dsl import F, Q, query
 from rest_framework.filters import BaseFilterBackend
-from waffle import flag_is_active
 
 from kuma.wiki.search import WikiDocumentType
 
@@ -12,11 +10,31 @@ from .models import Filter, FilterGroup
 
 
 def get_filters(getter_func):
+    """
+    Returns the values of all filter groups, intended to pull key/value pairs
+    from requests.
+
+    E.g. if 'topic' is a `FilterGroup` slug and given the URL::
+
+        ?q=test&topic=css&topic=html
+
+    this will return `['css', 'html']`.
+
+    If the given URL contains 'none', then no filters should be applied.
+
+    """
+    if getter_func("none"):
+        return [u'none']
     filters = collections.OrderedDict()
     for slug in FilterGroup.objects.values_list('slug', flat=True):
         for filters_slug in getter_func(slug, []):
             filters[filters_slug] = None
-    return filters.keys()
+    if filters:
+        return filters.keys()
+    else:
+        # Given a list of [<group_slug>, <tag_slug>, <shortcut>] we only want
+        # the tags.
+        return [x[1] for x in Filter.objects.default_filters()]
 
 
 class LanguageFilterBackend(BaseFilterBackend):
@@ -44,10 +62,10 @@ class LanguageFilterBackend(BaseFilterBackend):
 
         sq = queryset.to_dict().pop('query', query.MatchAll().to_dict())
 
-        if request.locale == settings.LANGUAGE_CODE:
-            locales = [request.locale]
+        if request.LANGUAGE_CODE == settings.LANGUAGE_CODE:
+            locales = [request.LANGUAGE_CODE]
         else:
-            locales = [request.locale, settings.LANGUAGE_CODE]
+            locales = [request.LANGUAGE_CODE, settings.LANGUAGE_CODE]
 
         positive_sq = {
             'filtered': {
@@ -58,7 +76,7 @@ class LanguageFilterBackend(BaseFilterBackend):
         negative_sq = {
             'bool': {
                 'must_not': [
-                    {'term': {'locale': request.locale}}
+                    {'term': {'locale': request.LANGUAGE_CODE}}
                 ]
             }
         }
@@ -100,7 +118,7 @@ class SearchQueryBackend(BaseFilterBackend):
                 functions=[query.SF('field_value_factor', field='boost')],
             )
 
-        if flag_is_active(request, 'search_explanation'):
+        if request.user.is_superuser:
             queryset = queryset.extra(explain=True)
 
         return queryset
@@ -168,10 +186,12 @@ class DatabaseFilterBackend(BaseFilterBackend):
                     active_filters.append(F('term', tags=filter_tags[0]))
 
             if len(filter_tags) > 1:
-                facet_params = F('terms', tags=filter_tags)
+                facet_params = F('terms', tags=list(filter_tags))
             else:
-                facet_params = F('term', tags=filter_tags[0])
-            active_facets.append((serialized_filter['slug'], facet_params))
+                if filter_tags:
+                    facet_params = F('term', tags=filter_tags[0])
+            if len(filter_tags):
+                active_facets.append((serialized_filter['slug'], facet_params))
 
         if active_filters:
             if len(active_filters) == 1:
