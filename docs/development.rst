@@ -184,8 +184,8 @@ There are a few ways to change an environment variables:
 
 .. _vagrant-config:
 
-Configuring Vagrant
--------------------
+The Vagrant Environment
+-----------------------
 It is easiest to configure Vagrant with a ``.env`` file, so that overrides are used
 when ``vagrant up`` is called.  A sample ``.env`` could contain::
 
@@ -226,8 +226,10 @@ Configuration variables that are available for Vagrant:
   Whether to use the ``vagrant-cachier`` plugin to cache system packages
   between installs. Default: ``true``
 
-Docker
-~~~~~~
+.. _advanced_config_docker:
+
+The Docker Environment
+----------------------
 Running docker-compose_ will create and run several containers, and each
 container's environment and settings are configured in ``docker-compose.yml``.
 The settings are "baked" into the containers created by ``docker-compose up``,
@@ -241,7 +243,9 @@ loads the Werkzeug debugger on exceptions (see docs for runserver_plus_), and
 that allows for stepping through the code with a debugger.
 To use this alternative, create an override file ``docker-compose.dev.yml``::
 
-    web:
+    version: "2"
+    services:
+      web:
         command: ./manage.py runserver_plus 0.0.0.0:8000
         stdin_open: true
         tty: true
@@ -270,8 +274,8 @@ documentation for more ideas on customizing the Docker environment.
 .. _pdb: https://docs.python.org/2/library/pdb.html
 .. _runserver_plus: http://django-extensions.readthedocs.io/en/latest/runserver_plus.html
 
-Database
-~~~~~~~~
+The Database
+------------
 The database connection is defined by the environment variable
 ``DATABASE_URL``, with these defaults::
 
@@ -293,8 +297,8 @@ To connect to the database specified in ``DATABASE_URL``, use::
 
 .. _dj-database-url: https://github.com/kennethreitz/dj-database-url
 
-Assets
-~~~~~~
+Asset Generation
+----------------
 Kuma will automatically run in debug mode, with the ``DEBUG`` setting
 turned to ``True``. That will make it serve images and have the pages
 formatted with CSS automatically.
@@ -314,7 +318,7 @@ assets locally (*Vagrant only*):
 #. Restart the web process by retarting ``foreman``
 
 Secure Cookies
-~~~~~~~~~~~~~~
+--------------
 To prevent error messages like "``Forbidden (CSRF cookie not set.):``", set the
 environment variable::
 

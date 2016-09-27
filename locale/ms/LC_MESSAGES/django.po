@@ -1,88 +1,92 @@
+# 
 msgid ""
 msgstr ""
 "Project-Id-Version: MDN 2016.0\n"
 "Report-Msgid-Bugs-To: dev-mdn@lists.mozilla.org\n"
 "POT-Creation-Date: 2016-08-15 09:57-0700\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"PO-Revision-Date: 2016-09-27 14:38+0000\n"
+"Last-Translator: manxmensch <manxmensch@gmail.com>\n"
 "Language-Team: Malay https://pontoon.mozilla.org/ms/\n"
 "Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Translate Toolkit 1.6.0\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Pontoon\n"
 
 #: jinja2/403.html:5 jinja2/403.html:19 jinja2/handlers/400.html:5
 msgid "Permission Denied"
-msgstr ""
+msgstr "Izin Ditolak"
 
 #: jinja2/403.html:23
 msgid "The wiki is in read-only mode."
-msgstr ""
+msgstr "Wiki dalam mod baca-sahaja."
 
 #: jinja2/403.html:25
 msgid "Your profile has been banned from making edits."
-msgstr ""
+msgstr "Profil anda telah disekat daripada mengedit."
 
 #: jinja2/403.html:27
 msgid "This user's profile has been banned."
-msgstr ""
+msgstr "Profil pengguna ini telah disekat."
 
 #: jinja2/403.html:29
 msgid "You must sign in to view all history"
-msgstr ""
+msgstr "Anda perlu daftar masuk untuk papar semua sejarah"
 
 #: jinja2/403.html:39 jinja2/handlers/400.html:21
 #, python-format
 msgid "<p>We're sorry %(name)s, we're afraid we can't do that.</p>"
-msgstr ""
+msgstr "<p>Kami minta maaf %(name)s, kami tidak dapat berbuat demikian.</p>"
 
 #: jinja2/403.html:43 jinja2/handlers/400.html:25
 msgid "<p>We're sorry, we're afraid we can't do that.</p>"
-msgstr ""
+msgstr "<p>Kami minta maaf, kami tidak dapat berbuat demikian.</p>"
 
 #: jinja2/403.html:50
 #, python-format
 msgid "<li><a href=\"%(logout_url)s\">Sign out</a> to try again.</li>"
-msgstr ""
+msgstr "<li><a href=\"%(logout_url)s\">Daftar keluar</a> untuk cuba lagi.</li>"
 
 #: jinja2/403.html:54 jinja2/handlers/400.html:36
 #, python-format
 msgid "<li><a href=\"%(login_url)s\">Sign in</a> to try again.</li>"
-msgstr ""
+msgstr "<li><a href=\"%(login_url)s\">Daftar masuk</a> untuk cuba lagi.</li>"
 
 #: jinja2/403.html:62
 msgid ""
 "<p class=\"attrib\"><small><a href=\"http://theoatmeal.com/comics/state_web_summer#tumblr\" rel=\"nofollow\">Tumbeasts</a> by Matthew Inman of <a href=\"http://theoatmeal.com\" rel=\"nofollow\">The "
 "Oatmeal</a></small></p>"
 msgstr ""
+"<p class=\"attrib\"><small><a href=\"http://theoatmeal.com/comics/state_web_summer#tumblr\" rel=\"nofollow\">Tumbeasts</a> by Matthew Inman of <a href=\"http://theoatmeal.com\" rel=\"nofollow\">The "
+"Oatmeal</a></small></p>"
 
 #: jinja2/404.html:6
 msgid "Not Found"
-msgstr ""
+msgstr "Tidak Ditemui"
 
 #: jinja2/404.html:20
 msgid "We're sorry, we couldn't find what you were looking for."
-msgstr ""
+msgstr "Kami minta maaf, kami tidak dapat menemukan carian anda."
 
 #: jinja2/404.html:24
 #, python-format
 msgid "You can try a search or start over on the <a href=\"%(homepage_url)s\">home page</a>."
-msgstr ""
+msgstr "Anda boleh cuba cari atau mula semula di <a href=\"%(homepage_url)s\">halaman utama</a>."
 
 #: jinja2/404.html:28
 #, python-format
 msgid "If you were following a documentation link, you can sign in and create the page. Otherwise, please <a href=\"%(bug_form_url)s\" rel=\"nofollow\">file a bug</a>. Thanks!"
-msgstr ""
+msgstr "Jika anda ikuti pautan dokumentasi, anda boleh daftar masuk dan cipta halaman. Sebaliknya, sila <a href=\"%(bug_form_url)s\" rel=\"nofollow\">failkan pepijat</a>. Terima kasih!"
 
 #: jinja2/404.html:36
 #, python-format
 msgid "<a href=\"%(tumbeasts_url)s\" rel=\"nofollow\">Tumbeasts</a> by Matthew Inman of <a href=\"%(oatmeal_url)s\" rel=\"nofollow\">The Oatmeal</a>"
-msgstr ""
+msgstr "<a href=\"%(tumbeasts_url)s\" rel=\"nofollow\">Tumbeasts</a> by Matthew Inman of <a href=\"%(oatmeal_url)s\" rel=\"nofollow\">The Oatmeal</a>"
 
 #: jinja2/500.html:5
 msgid "Internal Server Error"
-msgstr ""
+msgstr "Ralat Pelayan Dalaman"
 
 #: jinja2/base.html:12 jinja2/base.html:31 jinja2/base.html:37 jinja2/base.html:100 kuma/search/jinja2/search/plugin.html:3
 msgid "Mozilla Developer Network"
@@ -91,111 +95,111 @@ msgstr ""
 #: jinja2/base.html:75
 #, python-format
 msgid "You signed in with Persona. <a href=\"%(persona_info)s\">Persona is being turned off. Read more.</a>"
-msgstr ""
+msgstr "Anda mendaftar masuk dengan Persona. <a href=\"%(persona_info)s\">Persona sedang dinyahaktifkan. Ketahui selanjutnya.</a>"
 
 #: jinja2/base.html:83
 msgid "Skip to main content"
-msgstr ""
+msgstr "Langkau ke kandungan utama"
 
 #: jinja2/base.html:84
 msgid "Select language"
-msgstr ""
+msgstr "Pilih bahasa"
 
 #: jinja2/base.html:86
 msgid "Skip to search"
-msgstr ""
+msgstr "Langkau ke carian"
 
 #: jinja2/base.html:107 kuma/core/translations/search/filter/tools/name.py:4
 msgid "Tools"
-msgstr ""
+msgstr "Alatan"
 
 #: jinja2/base.html:111
 msgid "Contribute to MDN"
-msgstr ""
+msgstr "Sumbangan ke MDN"
 
 #: jinja2/base.html:113
 msgid "Get started"
-msgstr ""
+msgstr "Mulakan"
 
 #: jinja2/base.html:114
 msgid "Review or localize docs"
-msgstr ""
+msgstr "Semak atau terjemah dokumen"
 
 #: jinja2/base.html:117
 msgid "Site Tools"
-msgstr ""
+msgstr "Alatan Laman"
 
 #: jinja2/base.html:119
 msgid "Revision dashboard"
-msgstr ""
+msgstr "Papan pemuka semakan"
 
 #: jinja2/base.html:120
 msgid "Documentation status"
-msgstr ""
+msgstr "Status dokumentasi"
 
 #: jinja2/base.html:129
 msgid "Web Platform"
-msgstr ""
+msgstr "Platform Web"
 
 #: jinja2/base.html:133
 msgid "Technologies"
-msgstr ""
+msgstr "Teknologi"
 
 #: jinja2/base.html:135 kuma/core/translations/search/filter/html/name.py:4 kuma/landing/jinja2/landing/homepage.html:75 kuma/landing/jinja2/landing/promote_buttons.html:105
 msgid "HTML"
-msgstr ""
+msgstr "HTML"
 
 #: jinja2/base.html:136 kuma/core/translations/search/filter/css/name.py:4 kuma/landing/jinja2/landing/homepage.html:76 kuma/landing/jinja2/landing/promote_buttons.html:99
 msgid "CSS"
-msgstr ""
+msgstr "CSS"
 
 #: jinja2/base.html:137 kuma/core/translations/search/filter/js/name.py:4 kuma/landing/jinja2/landing/homepage.html:77 kuma/landing/jinja2/landing/promote_buttons.html:111
 msgid "JavaScript"
-msgstr ""
+msgstr "JavaScript"
 
 #: jinja2/base.html:138
 msgid "Graphics"
-msgstr ""
+msgstr "Grafik"
 
 #: jinja2/base.html:139
 msgid "APIs / DOM"
-msgstr ""
+msgstr "APIs / DOM"
 
 #: jinja2/base.html:140 kuma/core/sections.py:20
 msgid "Apps"
-msgstr ""
+msgstr "App"
 
 #: jinja2/base.html:141 kuma/core/translations/search/filter/mathml/name.py:4
 msgid "MathML"
-msgstr ""
+msgstr "MathML"
 
 #: jinja2/base.html:144
 msgid "References & Guides"
-msgstr ""
+msgstr "Panduan & Rujukan"
 
 #: jinja2/base.html:146
 msgid "Learn the Web"
-msgstr ""
+msgstr "Pelajari Web"
 
 #: jinja2/base.html:147
 msgid "Tutorials"
-msgstr ""
+msgstr "Tutorial"
 
 #: jinja2/base.html:148
 msgid "References"
-msgstr ""
+msgstr "Rujukan"
 
 #: jinja2/base.html:149
 msgid "Developer Guides"
-msgstr ""
+msgstr "Panduan Pembangun"
 
 #: jinja2/base.html:150
 msgid "Accessibility"
-msgstr ""
+msgstr "Aksesibiliti"
 
 #: jinja2/base.html:151
 msgid "...more docs"
-msgstr ""
+msgstr "...dokumen selanjutnya"
 
 #: jinja2/base.html:155
 msgid "Mozilla Docs"
@@ -203,23 +207,23 @@ msgstr ""
 
 #: jinja2/base.html:160 kuma/core/sections.py:6 kuma/landing/jinja2/landing/homepage.html:88
 msgid "Add-ons"
-msgstr ""
+msgstr "Add-ons"
 
 #: jinja2/base.html:161 kuma/core/translations/search/filter/firefox/name.py:4 kuma/landing/jinja2/landing/homepage.html:84
 msgid "Firefox"
-msgstr ""
+msgstr "Firefox"
 
 #: jinja2/base.html:162 kuma/landing/jinja2/landing/homepage.html:86
 msgid "Firefox Marketplace"
-msgstr ""
+msgstr "Firefox Marketplace"
 
 #: jinja2/base.html:163 kuma/core/translations/search/filter/b2g-os/name.py:4 kuma/landing/jinja2/landing/homepage.html:85
 msgid "B2G OS"
-msgstr ""
+msgstr "B2G OS"
 
 #: jinja2/base.html:164
 msgid "Persona"
-msgstr ""
+msgstr "Persona"
 
 #: jinja2/base.html:168
 msgid "Developer Tools"
@@ -227,33 +231,33 @@ msgstr ""
 
 #: jinja2/base.html:168
 msgid "Feedback"
-msgstr ""
+msgstr "Maklum balas"
 
 #: jinja2/base.html:173
 msgid "Get Firefox help"
-msgstr ""
+msgstr "Dapatkan bantuan Firefox"
 
 #: jinja2/base.html:174
 msgid "Get web development help"
-msgstr ""
+msgstr "Dapatkan bantuan pembangunan web"
 
 #: jinja2/base.html:177
 msgid "Join the MDN community"
-msgstr ""
+msgstr "Sertai komuniti MDN"
 
 #: jinja2/base.html:178
 msgid "Report a content problem"
-msgstr ""
+msgstr "Laporkan masalah kandungan"
 
 #: jinja2/base.html:179
 msgid "Report a bug"
-msgstr ""
+msgstr "Laporkan pepijat"
 
 #: jinja2/base.html:186 jinja2/base.html:187 jinja2/base.html:189 jinja2/includes/common_macros.html:26 jinja2/includes/common_macros.html:27 kuma/landing/jinja2/landing/homepage.html:38
 #: kuma/landing/jinja2/landing/homepage.html:48 kuma/landing/jinja2/landing/homepage.html:55 kuma/landing/jinja2/landing/homepage.html:60 kuma/search/jinja2/search/base.html:2
 #: kuma/search/jinja2/search/results.html:15 kuma/search/jinja2/search/results.html:52 kuma/search/jinja2/search/results.html:55 kuma/search/jinja2/search/results.html:60
 msgid "Search"
-msgstr ""
+msgstr "Cari"
 
 #: jinja2/base.html:205
 #, python-format
@@ -262,394 +266,396 @@ msgstr ""
 
 #: jinja2/base.html:210
 msgid "About MDN"
-msgstr ""
+msgstr "Perihal MDN"
 
 #: jinja2/base.html:211
 msgid "Terms"
-msgstr ""
+msgstr "Terma"
 
 #: jinja2/base.html:212
 msgid "Privacy"
-msgstr ""
+msgstr "Privasi"
 
 #: jinja2/base.html:213
 msgid "Cookies"
-msgstr ""
+msgstr "Kuki"
 
 #: jinja2/base.html:214
 msgid "Contribute to the code"
-msgstr ""
+msgstr "Beri sumbangan kod"
 
 #: jinja2/handlers/400.html:32
 msgid "<li><a href=\"/logout\">Log out</a> to try again.</li>"
-msgstr ""
+msgstr "<li><a href=\"/logout\">Log keluar</a> untuk cuba lagi.</li>"
 
 #: jinja2/includes/common_macros.html:18
 msgid "Search Firefox Help"
-msgstr ""
+msgstr "Cari Bantuan Firefox"
 
 #: jinja2/includes/common_macros.html:36
 #, python-format
 msgid "Welcome, <span class=\"user\">%(user)s</span>."
-msgstr ""
+msgstr "Selamat datang, <span class=\"user\">%(user)s</span>."
 
 #: jinja2/includes/common_macros.html:38
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: jinja2/includes/common_macros.html:40 kuma/users/jinja2/account/logout.html:3 kuma/users/jinja2/account/logout.html:8 kuma/users/jinja2/account/logout.html:17
 msgid "Sign Out"
-msgstr ""
+msgstr "Daftar Keluar"
 
 #: jinja2/includes/common_macros.html:44
 #, python-format
 msgid "Want to contribute?<br /> <a href=\"%(login_url)s\">Sign in</a>"
-msgstr ""
+msgstr "Mahu memberikan sumbangan?<br /> <a href=\"%(login_url)s\">Daftar masuk</a>"
 
 #: jinja2/includes/lang_switcher.html:2 kuma/wiki/jinja2/wiki/document.html:86
 msgid "Other languages:"
-msgstr ""
+msgstr "Bahasa lain:"
 
 #: jinja2/includes/lang_switcher.html:15 kuma/wiki/jinja2/wiki/document.html:97
 msgid "Go"
-msgstr ""
+msgstr "Teruskan"
 
 #: jinja2/includes/login.html:6
 msgid "Sign out"
-msgstr ""
+msgstr "Daftar keluar"
 
 #: jinja2/includes/login.html:17
 msgid "Sign in"
-msgstr ""
+msgstr "Daftar masuk"
 
 #: jinja2/includes/login.html:19 kuma/users/forms.py:68 kuma/users/models.py:146 kuma/users/jinja2/users/includes/user_title_info.html:81 kuma/users/jinja2/users/includes/user_title_info.html:85
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: jinja2/includes/login.html:24
 msgid "Sign in or create an account:"
-msgstr ""
+msgstr "Daftar masuk atau cipta akaun:"
 
 #: jinja2/includes/login.html:28
 msgid "Sign in:"
-msgstr ""
+msgstr "Daftar masuk:"
 
 #: jinja2/includes/login.html:28
 msgid "Why is Persona sign in only?"
-msgstr ""
+msgstr "Mengapa Persona daftar masuk sahaja?"
 
 #: jinja2/includes/login.html:33 kuma/users/jinja2/account/signup_closed.html:8
 msgid "We are sorry, but profile creation is currently disabled."
-msgstr ""
+msgstr "Kami minta maaf, kerana mencipta profil kini dinyahdayakan."
 
 #: jinja2/includes/paginator.html:6 kuma/search/jinja2/search/results.html:154 kuma/wiki/jinja2/wiki/list/revisions.html:56
 msgid "Previous"
-msgstr ""
+msgstr "Sebelumnya"
 
 #: jinja2/includes/paginator.html:30 kuma/search/jinja2/search/results.html:159
 msgid "Next"
-msgstr ""
+msgstr "Seterusnya"
 
 #: jinja2/includes/translate_locales.html:3
 msgid "Afrikaans"
-msgstr ""
+msgstr "Afrikaans"
 
 #: jinja2/includes/translate_locales.html:4
 msgid "Albanian"
-msgstr ""
+msgstr "Albanian"
 
 #: jinja2/includes/translate_locales.html:5
 msgid "Arabic"
-msgstr ""
+msgstr "Arabic"
 
 #: jinja2/includes/translate_locales.html:6
 msgid "Azerbaijani"
-msgstr ""
+msgstr "Azerbaijani"
 
 #: jinja2/includes/translate_locales.html:7
 msgid "Bambara"
-msgstr ""
+msgstr "Bambara"
 
 #: jinja2/includes/translate_locales.html:8
 msgid "Bengali (Bangladesh)"
-msgstr ""
+msgstr "Bengali (Bangladesh)"
 
 #: jinja2/includes/translate_locales.html:9
 msgid "Bengali (India)"
-msgstr ""
+msgstr "Bengali (India)"
 
 #: jinja2/includes/translate_locales.html:10
 msgid "Burmese"
-msgstr ""
+msgstr "Burmese"
 
 #: jinja2/includes/translate_locales.html:11
 msgid "Catalan"
-msgstr ""
+msgstr "Catalan"
 
 #: jinja2/includes/translate_locales.html:12
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Chinese (Simplified)"
 
 #: jinja2/includes/translate_locales.html:13
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Chinese (Traditional)"
 
 #: jinja2/includes/translate_locales.html:14
 msgid "Croatian"
-msgstr ""
+msgstr "Croatian"
 
 #: jinja2/includes/translate_locales.html:15
 msgid "Czech"
-msgstr ""
+msgstr "Czech"
 
 #: jinja2/includes/translate_locales.html:16
 msgid "Dutch"
-msgstr ""
+msgstr "Dutch"
 
 #: jinja2/includes/translate_locales.html:17
 msgid "English (US)"
-msgstr ""
+msgstr "English (US)"
 
 #: jinja2/includes/translate_locales.html:18
 msgid "Ewe"
-msgstr ""
+msgstr "Ewe"
 
 #: jinja2/includes/translate_locales.html:19
 msgid "Finnish"
-msgstr ""
+msgstr "Finnish"
 
 #: jinja2/includes/translate_locales.html:20
 msgid "French"
-msgstr ""
+msgstr "French"
 
 #: jinja2/includes/translate_locales.html:21
 msgid "Frisian"
-msgstr ""
+msgstr "Frisian"
 
 #: jinja2/includes/translate_locales.html:22
 msgid "Fulah"
-msgstr ""
+msgstr "Fulah"
 
 #: jinja2/includes/translate_locales.html:23
 msgid "Georgian"
-msgstr ""
+msgstr "Georgian"
 
 #: jinja2/includes/translate_locales.html:24
 msgid "German"
-msgstr ""
+msgstr "German"
 
 #: jinja2/includes/translate_locales.html:25
 msgid "Greek"
-msgstr ""
+msgstr "Greek"
 
 #: jinja2/includes/translate_locales.html:26
 msgid "Hausa"
-msgstr ""
+msgstr "Hausa"
 
 #: jinja2/includes/translate_locales.html:27
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebrew"
 
 #: jinja2/includes/translate_locales.html:28
 msgid "Hindi (India)"
-msgstr ""
+msgstr "Hindi (India)"
 
 #: jinja2/includes/translate_locales.html:29
 msgid "Hungarian"
-msgstr ""
+msgstr "Hungarian"
 
 #: jinja2/includes/translate_locales.html:30
 msgid "Igbo"
-msgstr ""
+msgstr "Igbo"
 
 #: jinja2/includes/translate_locales.html:31
 msgid "Indonesian"
-msgstr ""
+msgstr "Indonesian"
 
 #: jinja2/includes/translate_locales.html:32
 msgid "Irish"
-msgstr ""
+msgstr "Irish"
 
 #: jinja2/includes/translate_locales.html:33
 msgid "Italian"
-msgstr ""
+msgstr "Italian"
 
 #: jinja2/includes/translate_locales.html:34
 msgid "Japanese"
-msgstr ""
+msgstr "Japanese"
 
 #: jinja2/includes/translate_locales.html:35
 msgid "Korean"
-msgstr ""
+msgstr "Korean"
 
 #: jinja2/includes/translate_locales.html:36
 msgid "Lingala"
-msgstr ""
+msgstr "Lingala"
 
 #: jinja2/includes/translate_locales.html:37
 msgid "Malagasy"
-msgstr ""
+msgstr "Malagasy"
 
 #: jinja2/includes/translate_locales.html:38
 msgid "Malay"
-msgstr ""
+msgstr "Malay"
 
 #: jinja2/includes/translate_locales.html:39
 msgid "Malayalam"
-msgstr ""
+msgstr "Malayalam"
 
 #: jinja2/includes/translate_locales.html:40
 msgid "Persian"
-msgstr ""
+msgstr "Persian"
 
 #: jinja2/includes/translate_locales.html:41
 msgid "Polish"
-msgstr ""
+msgstr "Polish"
 
 #: jinja2/includes/translate_locales.html:42
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portuguese (Brazilian)"
 
 #: jinja2/includes/translate_locales.html:43
 msgid "Portuguese (Portugal)"
-msgstr ""
+msgstr "Portuguese (Portugal)"
 
 #: jinja2/includes/translate_locales.html:44
 msgid "Romanian"
-msgstr ""
+msgstr "Romanian"
 
 #: jinja2/includes/translate_locales.html:45
 msgid "Russian"
-msgstr ""
+msgstr "Russian"
 
 #: jinja2/includes/translate_locales.html:46 jinja2/includes/translate_locales.html:47
 msgid "Serbian"
-msgstr ""
+msgstr "Serbian"
 
 #: jinja2/includes/translate_locales.html:48
 msgid "Songhai"
-msgstr ""
+msgstr "Songhai"
 
 #: jinja2/includes/translate_locales.html:49
 msgid "Spanish"
-msgstr ""
+msgstr "Spanish"
 
 #: jinja2/includes/translate_locales.html:50
 msgid "Swahili"
-msgstr ""
+msgstr "Swahili"
 
 #: jinja2/includes/translate_locales.html:51
 msgid "Swedish"
-msgstr ""
+msgstr "Swedish"
 
 #: jinja2/includes/translate_locales.html:52
 msgid "Tagalog"
-msgstr ""
+msgstr "Tagalog"
 
 #: jinja2/includes/translate_locales.html:53
 msgid "Tamil"
-msgstr ""
+msgstr "Tamil"
 
 #: jinja2/includes/translate_locales.html:54
 msgid "Thai"
-msgstr ""
+msgstr "Thai"
 
 #: jinja2/includes/translate_locales.html:55
 msgid "Tswana"
-msgstr ""
+msgstr "Tswana"
 
 #: jinja2/includes/translate_locales.html:56
 msgid "Turkish"
-msgstr ""
+msgstr "Turkish"
 
 #: jinja2/includes/translate_locales.html:57
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainian"
 
 #: jinja2/includes/translate_locales.html:58
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamese"
 
 #: jinja2/includes/translate_locales.html:59
 msgid "Wolof"
-msgstr ""
+msgstr "Wolof"
 
 #: jinja2/includes/translate_locales.html:60
 msgid "Xhosa"
-msgstr ""
+msgstr "Xhosa"
 
 #: jinja2/includes/translate_locales.html:61
 msgid "Yoruba"
-msgstr ""
+msgstr "Yoruba"
 
 #: jinja2/includes/translate_locales.html:62
 msgid "Zulu"
-msgstr ""
+msgstr "Zulu"
 
 #: jinja2/includes/unsubscribe_text.ltxt:3
 msgid "Unsubscribe from these emails:"
-msgstr ""
+msgstr "Nyahlanggan e-mel ini:"
 
 #: jinja2/tidings/unsubscribe.html:2 jinja2/tidings/unsubscribe.html:12 jinja2/tidings/unsubscribe_error.html:2 jinja2/tidings/unsubscribe_success.html:2
 msgid "Unsubscribe"
-msgstr ""
+msgstr "Nyahlanggan"
 
 #: jinja2/tidings/unsubscribe.html:7
 msgid "Are you sure you want to unsubscribe?"
-msgstr ""
+msgstr "Anda pasti mahu nyahlanggan?"
 
 #: jinja2/tidings/unsubscribe.html:13 kuma/authkeys/jinja2/authkeys/delete.html:16 kuma/authkeys/jinja2/authkeys/new.html:17 kuma/wiki/jinja2/wiki/confirm_document_delete.html:39
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:40 kuma/wiki/jinja2/wiki/move.html:93
 msgid "Cancel"
-msgstr ""
+msgstr "Batal"
 
 #: jinja2/tidings/unsubscribe_error.html:7
 msgid "Unsubscribe Error"
-msgstr ""
+msgstr "Ralat Nyahlanggan"
 
 #: jinja2/tidings/unsubscribe_error.html:10
 msgid ""
 "We could not find your subscription. Either it has already been cancelled, or there was a mistake in the unsubscribe link. Please make sure the entire link from the email made it into the browser. "
 "If the last part of the link wraps onto a second line in the email, try copying and pasting the link into the browser."
 msgstr ""
+"Kami tidak dapat mencari langganan anda. Sama ada sudah telah dibatalkan, atau ada kesilapan pada pautan nyahlanggan. Sila pastikan seluruh pautan daripada e-mel dihantar ke pelayar. Jika bahagian "
+"akhir pautan merangkumi garisan kedua dalam e-mel tersebut, cuba salin dan tampal pautan ke dalam pelayar."
 
 #: jinja2/tidings/unsubscribe_success.html:7
 msgid "Unsubscribed"
-msgstr ""
+msgstr "Nyahlanggan"
 
 #: jinja2/tidings/unsubscribe_success.html:9
 msgid "You have been unsubscribed."
-msgstr ""
+msgstr "Anda telah nyahlanggan."
 
 #: kuma/attachments/admin.py:60
 #, python-format
 msgid "The following attachment files were moved to the trash: %(filenames)s. You may want to review them before their automatic purge after %(days)s days from the file storage."
-msgstr ""
+msgstr "Fai lampiran berikut telah dialih ke sampah: %(filenames)s. Anda mungkin mahu semak semula sebelum dihapuskan secara automatik selepas %(days)s hari dalam storan fail."
 
 #: kuma/attachments/admin.py:64
 msgid "and"
-msgstr ""
+msgstr "dan"
 
 #: kuma/attachments/admin.py:127
 #, python-format
 msgid "The attachment file \"%(filename)s\" was moved to the trash. You may want to review the file before its automatic purge after %(days)s days from the file storage system."
-msgstr ""
+msgstr "Fai lampiran \"%(filename)s\" telah dialih ke sampah. Anda mungkin mahu semak semula fail sebelum dihapuskan secara automatik selepas %(days)s hari dalam sistem storan fail."
 
 #: kuma/attachments/apps.py:12 kuma/attachments/jinja2/attachments/includes/attachment_list.html:7
 msgid "Attachments"
-msgstr ""
+msgstr "Lampiran"
 
 #: kuma/attachments/feeds.py:9
 msgid "MDN recent file changes"
-msgstr ""
+msgstr "Perubahan fail terkini MDN"
 
 #: kuma/attachments/feeds.py:10
 msgid "Recent revisions to MDN file attachments"
-msgstr ""
+msgstr "Semakan terkini lampiran fail MDN"
 
 #: kuma/attachments/forms.py:10
 msgid "Files of this type are not permitted."
-msgstr ""
+msgstr "Fail jenis ini tidak dibenarkan."
 
 #: kuma/attachments/models.py:112
 msgid "The MIME type is used when serving the attachment. Automatically populated by inspecting the file on upload. Please only override if needed."
@@ -657,121 +663,121 @@ msgstr ""
 
 #: kuma/attachments/models.py:140
 msgid "attachment revision"
-msgstr ""
+msgstr "semakan lampiran"
 
 #: kuma/attachments/models.py:141
 msgid "attachment revisions"
-msgstr ""
+msgstr "semakan lampiran"
 
 #: kuma/attachments/models.py:214
 msgid "The attachment file that was trashed"
-msgstr ""
+msgstr "Fail lampiran yang telah dibuang"
 
 #: kuma/attachments/models.py:219
 msgid "The date and time the attachment was trashed"
-msgstr ""
+msgstr "Tarikh dan masa lampiran dibuang"
 
 #: kuma/attachments/models.py:224
 msgid "The username of the user who trashed the attachment"
-msgstr ""
+msgstr "Nama pengguna yang membuang lampiran"
 
 #: kuma/attachments/models.py:229
 msgid "Whether or not this attachment was the current attachment revision at the time of trashing."
-msgstr ""
+msgstr "Samada lampiran ini adalah semakan lampiran semasa ketika membuang sampah."
 
 #: kuma/attachments/models.py:234
 msgid "Trashed attachment"
-msgstr ""
+msgstr "Buang lampiran"
 
 #: kuma/attachments/models.py:235
 msgid "Trashed attachments"
-msgstr ""
+msgstr "Buang lampiran"
 
 #. 'title' is the title of the document.
 #: kuma/attachments/jinja2/attachments/edit_attachment.html:3
 #, python-format
 msgid "Attachments | %(title)s"
-msgstr ""
+msgstr "Lampiran | %(title)s"
 
 #: kuma/attachments/jinja2/attachments/edit_attachment.html:21
 #, python-format
 msgid "Upload file to article %(title)s"
-msgstr ""
+msgstr "Muat naik fail ke artikel %(title)s"
 
 #: kuma/attachments/jinja2/attachments/edit_attachment.html:30
 msgid "Upload files"
-msgstr ""
+msgstr "Muat naik fail"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:7
 msgid "Learn how to use Attachments"
-msgstr ""
+msgstr "Ketahui cara menggunakan Lampiran"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:11 kuma/attachments/jinja2/attachments/includes/attachment_list.html:20
 msgid "Upload Files"
-msgstr ""
+msgstr "Muat naik Fail"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:16
 msgid "This document has no attachments."
-msgstr ""
+msgstr "Dokumen ini tiada lampiran."
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:18
 msgid "Images can be attached, and then linked in the article."
-msgstr ""
+msgstr "Imej boleh dilampirkan, dan kemudian dipautkan ke artikel."
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:44 kuma/attachments/jinja2/attachments/includes/attachment_list.html:76
 msgid "File"
-msgstr ""
+msgstr "Fail"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:45 kuma/dashboards/jinja2/dashboards/includes/revision_dashboard_body.html:8 kuma/users/models.py:65
 #: kuma/users/jinja2/users/includes/user_revision_history_form.html:9 kuma/wiki/models.py:1911
 msgid "Title"
-msgstr ""
+msgstr "Tajuk"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:46 kuma/authkeys/jinja2/authkeys/delete.html:9 kuma/authkeys/jinja2/authkeys/history.html:10
 #: kuma/authkeys/jinja2/authkeys/new.html:36
 msgid "Description"
-msgstr ""
+msgstr "Keterangan"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:47
 msgid "Comments"
-msgstr ""
+msgstr "Komen"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:70
 msgid "Attached to this article"
-msgstr ""
+msgstr "Lampirkan ke artikel ini"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:72
 msgid "Attached to another article"
-msgstr ""
+msgstr "Lampirkan ke artikel lain"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:77
 msgid "Size"
-msgstr ""
+msgstr "Saiz"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:78
 msgid "Last modified"
-msgstr ""
+msgstr "Ubah suai terakhir"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:79
 msgid "Uploaded by"
-msgstr ""
+msgstr "Dimuat naik oleh"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:82
 msgid "Linked in article"
-msgstr ""
+msgstr "Dipautkan dalam artikel"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:84
 msgid "Article attached to"
-msgstr ""
+msgstr "Artikel dilampirkan ke"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:97
 #, python-format
 msgid "%(bytes)s bytes"
-msgstr ""
+msgstr "bait %(bytes)s"
 
 #: kuma/attachments/jinja2/attachments/includes/attachment_list.html:99 kuma/attachments/jinja2/attachments/includes/attachment_list.html:118
 msgid "n/a"
-msgstr ""
+msgstr "n/a"
 
 #: kuma/authkeys/models.py:31
 msgid "Lookup key"
@@ -787,12 +793,12 @@ msgstr ""
 
 #: kuma/authkeys/jinja2/authkeys/delete.html:7 kuma/authkeys/jinja2/authkeys/history.html:8 kuma/authkeys/jinja2/authkeys/new.html:34
 msgid "Created"
-msgstr ""
+msgstr "Dicipta"
 
 #: kuma/authkeys/jinja2/authkeys/delete.html:15 kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:106 kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:245
 #: kuma/wiki/jinja2/wiki/confirm_document_delete.html:15 kuma/wiki/jinja2/wiki/confirm_document_delete.html:38
 msgid "Delete"
-msgstr ""
+msgstr "Hapus"
 
 #: kuma/authkeys/jinja2/authkeys/history.html:14
 msgid "This key has not been used yet."
@@ -828,8 +834,8 @@ msgstr ""
 
 #: kuma/authkeys/jinja2/authkeys/new.html:7
 msgid ""
-"<p>Describe your intended use for this key, below. <p><strong>NOTE:</strong> This will be your only means of identifying this key later, other than the date and time of its creation. So, be as "
-"clear as you can.</p>"
+"<p>Describe your intended use for this key, below. <p><strong>NOTE:</strong> This will be your only means of identifying this key later, other than the date and time of its creation. So, be as clear"
+" as you can.</p>"
 msgstr ""
 
 #: kuma/authkeys/jinja2/authkeys/new.html:16
@@ -1044,7 +1050,7 @@ msgstr ""
 
 #: kuma/dashboards/jinja2/dashboards/revisions.html:2
 msgid "Revision Dashboard"
-msgstr ""
+msgstr "Papan Pemuka semakan"
 
 #: kuma/dashboards/jinja2/dashboards/revisions.html:45
 msgid "Authors:"
@@ -1076,7 +1082,7 @@ msgstr ""
 
 #: kuma/dashboards/jinja2/dashboards/includes/revision_dashboard_body.html:7 kuma/users/jinja2/users/includes/user_revision_history_form.html:8 kuma/wiki/models.py:1864
 msgid "Revision"
-msgstr ""
+msgstr "Semakan"
 
 #: kuma/dashboards/jinja2/dashboards/includes/revision_dashboard_body.html:9 kuma/users/jinja2/users/user_detail.html:43 kuma/users/jinja2/users/includes/user_revision_history_form.html:10
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:32 kuma/wiki/jinja2/wiki/revision.html:42
@@ -1118,7 +1124,7 @@ msgstr ""
 #: kuma/dashboards/jinja2/dashboards/includes/revision_dashboard_body.html:65
 #, python-format
 msgid "banned %(ban_date)s by %(user)s"
-msgstr ""
+msgstr "disekat %(ban_date)s oleh %(user)s"
 
 #: kuma/dashboards/jinja2/dashboards/includes/revision_dashboard_body.html:79
 #, python-format
@@ -1140,19 +1146,19 @@ msgstr ""
 
 #: kuma/dashboards/jinja2/dashboards/includes/revision_dashboard_body.html:103
 msgid "There are no revisions matching this filter set."
-msgstr ""
+msgstr "Tiada semakan yang sepadan set penapis ini."
 
 #. Please localize 'English' here.
 #. Please replace 'English' with your language.
 #: kuma/dashboards/jinja2/dashboards/includes/watch_approved.html:8 kuma/dashboards/jinja2/dashboards/includes/watch_approved.html:11
 msgid "Stop getting emailed when English revisions are approved"
-msgstr ""
+msgstr "Hentikan e-mel apabila semakan Bahasa Malaysia diluluskan"
 
 #. Please localize 'English' here.
 #. Please replace 'English' with your language.
 #: kuma/dashboards/jinja2/dashboards/includes/watch_approved.html:20 kuma/dashboards/jinja2/dashboards/includes/watch_approved.html:23
 msgid "Get emailed when English revisions are approved"
-msgstr ""
+msgstr "Dapatkan e-mel apabila semakan Bahasa Malaysia diluluskan"
 
 #. Please localize 'English' here.
 #. Please replace 'English' with your language.
@@ -1172,8 +1178,8 @@ msgstr ""
 
 #: kuma/landing/jinja2/landing/homepage.html:14
 msgid ""
-"The Mozilla Developer Network (MDN) provides information about Open Web technologies including HTML, CSS, and APIs for both Web sites and HTML5 Apps. It also documents Mozilla products, like "
-"Firefox OS."
+"The Mozilla Developer Network (MDN) provides information about Open Web technologies including HTML, CSS, and APIs for both Web sites and HTML5 Apps. It also documents Mozilla products, like Firefox"
+" OS."
 msgstr ""
 
 #: kuma/landing/jinja2/landing/homepage.html:32
@@ -1331,8 +1337,8 @@ msgstr ""
 #: kuma/landing/jinja2/landing/promote_buttons.html:20
 msgid ""
 "<ol> <li><strong>Get Buttons:</strong> Use our simple form below to create a custom button and source code to promote MDN on your website or blog.</li> <li><strong>Post Buttons:</strong> Copy the "
-"source code and paste it anywhere on your website or blog to help people click through to MDN.</li> <li><strong>Feel Good:</strong> Take pride in knowing you're making developers lives just a "
-"little bit better by sharing MDN with the world.</li> </ol>"
+"source code and paste it anywhere on your website or blog to help people click through to MDN.</li> <li><strong>Feel Good:</strong> Take pride in knowing you're making developers lives just a little"
+" bit better by sharing MDN with the world.</li> </ol>"
 msgstr ""
 
 #: kuma/landing/jinja2/landing/promote_buttons.html:35 kuma/wiki/jinja2/wiki/includes/page_buttons.html:31
@@ -1538,42 +1544,36 @@ msgstr ""
 msgid "%(count)s document found for \"%(query)s\" in %(locale_native)s."
 msgid_plural "%(count)s documents found for \"%(query)s\" in %(locale_native)s."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/search/jinja2/search/results.html:80
 #, python-format
 msgid "%(count)s document found for \"%(query)s\" in %(locale_native)s and %(default_locale_native)s."
 msgid_plural "%(count)s documents found for \"%(query)s\" in %(locale_native)s and %(default_locale_native)s."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/search/jinja2/search/results.html:88
 #, python-format
 msgid "%(count)s document found in %(locale_native)s."
 msgid_plural "%(count)s documents found in %(locale_native)s."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/search/jinja2/search/results.html:94
 #, python-format
 msgid "%(count)s document found in %(locale_native)s and %(default_locale_native)s."
 msgid_plural "%(count)s documents found in %(locale_native)s and %(default_locale_native)s."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/search/jinja2/search/results.html:104
 #, python-format
 msgid "%(count)s document found for \"%(query)s\"."
 msgid_plural "%(count)s documents found for \"%(query)s\"."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/search/jinja2/search/results.html:110
 #, python-format
 msgid "%(count)s document found."
 msgid_plural "%(count)s documents found."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/search/jinja2/search/results.html:119
 msgid "Showing all results."
@@ -1632,8 +1632,8 @@ msgstr ""
 #: kuma/users/adapters.py:17
 #, python-format
 msgid ""
-"Sorry, you must have at least one connected account so you can sign in. To disconnect this account connect a different one first. To delete your MDN profile please <a href=\"%(bug_form_url)s\" rel="
-"\"nofollow\">file a bug</a>."
+"Sorry, you must have at least one connected account so you can sign in. To disconnect this account connect a different one first. To delete your MDN profile please <a href=\"%(bug_form_url)s\" "
+"rel=\"nofollow\">file a bug</a>."
 msgstr ""
 
 #: kuma/users/adapters.py:21
@@ -1724,7 +1724,7 @@ msgstr ""
 #: kuma/users/models.py:29
 #, python-format
 msgid "%(banned_user)s banned by %(banned_by)s"
-msgstr ""
+msgstr "%(banned_user)s disekat oleh %(banned_by)s"
 
 #: kuma/users/models.py:32
 #, python-format
@@ -2109,10 +2109,9 @@ msgid ""
 "A profile already exists with an email address below. Do you already have an MDN profile? <a href=\"%(persona_login_url)s\" class=\"launch-persona-login\" data-next=\"%(persona_next_url)s\">Yes, "
 "connect with my MDN profile</a>"
 msgid_plural ""
-"A profile already exists with one of these email addresses below. Do you already have an MDN profile? <a href=\"%(persona_login_url)s\" class=\"launch-persona-login\" data-next="
-"\"%(persona_next_url)s\">Yes, connect with my MDN profile</a>"
+"A profile already exists with one of these email addresses below. Do you already have an MDN profile? <a href=\"%(persona_login_url)s\" class=\"launch-persona-login\" data-"
+"next=\"%(persona_next_url)s\">Yes, connect with my MDN profile</a>"
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/users/jinja2/socialaccount/signup.html:48
 #, python-format
@@ -2155,8 +2154,8 @@ msgstr ""
 #: kuma/users/jinja2/socialaccount/signup.html:148
 #, python-format
 msgid ""
-"What email address should we use to send you MDN-related messages and notifications? This address will <strong>not</strong> be displayed on MDN and will be used according to our <a href="
-"\"%(privacy_url)s\">privacy policy</a>."
+"What email address should we use to send you MDN-related messages and notifications? This address will <strong>not</strong> be displayed on MDN and will be used according to our <a "
+"href=\"%(privacy_url)s\">privacy policy</a>."
 msgstr ""
 
 #: kuma/users/jinja2/socialaccount/signup.html:164
@@ -2230,12 +2229,12 @@ msgstr ""
 #: kuma/users/jinja2/users/ban_user_and_cleanup.html:26
 #, python-format
 msgid "<a href=\"%(url)s\">%(user)s</a> has been banned."
-msgstr ""
+msgstr "<a href=\"%(url)s\">%(user)s</a> telah disekat."
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup.html:29
 #, python-format
 msgid "%(user)s has already been banned. You may review and revert their revisions below."
-msgstr ""
+msgstr "%(user)s telah disekat. Anda boleh semak dan pinda semakan mereka di bawah."
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup.html:46
 msgid "You cannot ban yourself for spam."
@@ -2259,7 +2258,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup.html:61
 msgid "User has not made any revisions to be reverted in the past three days, and this user was already banned."
-msgstr ""
+msgstr "Pengguna masih tiada membuat semakan untuk dipinda sejak tiga hari lalu, dan pengguna ini telah disekat."
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:19
 msgid "Summary"
@@ -2271,7 +2270,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:23
 msgid "Banned:"
-msgstr ""
+msgstr "Disekat:"
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:31
 msgid "Submitted to Akismet as spam:"
@@ -2279,7 +2278,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:44
 msgid "The user did not have any revisions that were reported as spam."
-msgstr ""
+msgstr "Pengguna ini tiada membuat semakan yang dilaporkan sebagai spam."
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:48
 msgid "Deleted:"
@@ -2287,7 +2286,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:61
 msgid "The user did not have any revisions that were deleted."
-msgstr ""
+msgstr "Pengguna ini tiada membuat semakan yang dihapuskan."
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:65
 msgid "Reverted:"
@@ -2295,7 +2294,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:79
 msgid "The user did not have any revisions that were reverted."
-msgstr ""
+msgstr "Pengguna ini tiada membuat semakan yang dipinda."
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:85
 msgid "Needs follow up"
@@ -2313,7 +2312,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:118
 msgid "Revisions skipped due to newer non-spam revision:"
-msgstr ""
+msgstr "Semakan dilangkau kerana semakan non-spam yang lebih baru:"
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:139
 msgid "Could not submit to Akismet:"
@@ -2333,7 +2332,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:201
 msgid "Latest revision is non-spam:"
-msgstr ""
+msgstr "Semakan terakhir adalah non-spam:"
 
 #: kuma/users/jinja2/users/ban_user_and_cleanup_summary.html:225
 msgid "Already identified as spam:"
@@ -2345,11 +2344,11 @@ msgstr ""
 
 #: kuma/users/jinja2/users/user_banned.html:2
 msgid "You've Been Banned"
-msgstr ""
+msgstr "Anda Telah Disekat"
 
 #: kuma/users/jinja2/users/user_banned.html:20
 msgid "You have been banned for the following reasons:"
-msgstr ""
+msgstr "Anda telah disekat berdasarkan alasan berikut:"
 
 #: kuma/users/jinja2/users/user_banned.html:30
 msgid "<p><a href=\"mailto:mdn-admins@mozilla.org?subject=Ban Appeal\">Click here</a> to appeal this ban.</p>"
@@ -2588,7 +2587,7 @@ msgstr ""
 
 #: kuma/users/jinja2/users/includes/user_revision_history_form.html:86
 msgid "This user has not created any revisions in the past three days."
-msgstr ""
+msgstr "Pengguna ini tidak membuat semakan sejak tiga hari lalu."
 
 #: kuma/users/jinja2/users/includes/user_title_info.html:22 kuma/wiki/content.py:739 kuma/wiki/jinja2/wiki/includes/buttons.html:41
 msgid "Edit"
@@ -2618,15 +2617,15 @@ msgstr ""
 #: kuma/users/templatetags/jinja_helpers.py:37
 #, python-format
 msgid "Banned on %(ban_date)s by %(ban_admin)s."
-msgstr ""
+msgstr "Disekat pada %(ban_date)s oleh %(ban_admin)s."
 
 #: kuma/users/templatetags/jinja_helpers.py:44
 msgid "Banned"
-msgstr ""
+msgstr "Disekat"
 
 #: kuma/users/templatetags/jinja_helpers.py:47
 msgid "Clean Up Revisions"
-msgstr ""
+msgstr "Bersihkan Semakan"
 
 #: kuma/users/templatetags/jinja_helpers.py:52
 msgid "Ban User"
@@ -2714,11 +2713,11 @@ msgstr ""
 
 #: kuma/wiki/feeds.py:259
 msgid "MDN recent revisions"
-msgstr ""
+msgstr "Semakan terkini MDN"
 
 #: kuma/wiki/feeds.py:260
 msgid "Recent revisions to MDN documents"
-msgstr ""
+msgstr "Semakan terkini dokumen MDN"
 
 #: kuma/wiki/feeds.py:351
 msgid "Show comparison"
@@ -2861,11 +2860,11 @@ msgstr ""
 
 #: kuma/wiki/forms.py:472
 msgid "Tag this revision for review?"
-msgstr ""
+msgstr "Tag semakan ini untuk disemak?"
 
 #: kuma/wiki/forms.py:479
 msgid "Tag this revision for localization?"
-msgstr ""
+msgstr "Tag semakan ini untuk lokalisasi?"
 
 #: kuma/wiki/forms.py:878
 msgid "New slug:"
@@ -2940,7 +2939,7 @@ msgstr ""
 #: kuma/wiki/models.py:1691
 #, python-format
 msgid "A revision must be based on a revision of the %(locale)s document. Revision ID %(id)s does not fit those criteria."
-msgstr ""
+msgstr "Semakan mestilah berdasarkan semakan dokumen %(locale)s. ID semakan %(id)s tidak memenuhi kriteria tersebut."
 
 #: kuma/wiki/models.py:1824
 msgid "IP address"
@@ -3018,8 +3017,8 @@ msgstr ""
 #: kuma/wiki/jinja2/403-create-page.html:7
 #, python-format
 msgid ""
-"Creating a new page is a restricted action. To request a new page, please <a href=\"%(request_page_url)s\">file a bug</a>. If you need permission to create new pages, please <a href=\"%(email_link)s"
-"\">contact us</a>."
+"Creating a new page is a restricted action. To request a new page, please <a href=\"%(request_page_url)s\">file a bug</a>. If you need permission to create new pages, please <a "
+"href=\"%(email_link)s\">contact us</a>."
 msgstr ""
 
 #: kuma/wiki/jinja2/403-create-page.html:17
@@ -3032,11 +3031,11 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/compare_revisions.html:4
 #, python-format
 msgid "Compare Revisions | %(document)s"
-msgstr ""
+msgstr "Bandingkan Semakan | %(document)s"
 
 #: kuma/wiki/jinja2/wiki/compare_revisions.html:13
 msgid "Compare Revisions"
-msgstr ""
+msgstr "Bandingkan Semakan"
 
 #: kuma/wiki/jinja2/wiki/compare_revisions.html:18
 msgid "Back to History"
@@ -3069,7 +3068,7 @@ msgstr ""
 
 #: kuma/wiki/jinja2/wiki/confirm_document_delete.html:29
 msgid "You are about to delete this document and all of its revisions. Please let us know why this page should be deleted."
-msgstr ""
+msgstr "Anda akan hapuskan dokumen ini dan semua semakannya. Maklumkan kepada kami alasan untuk halaman ini perlu dihapuskan."
 
 #: kuma/wiki/jinja2/wiki/confirm_document_delete.html:36
 msgid "Are you sure you want to continue?"
@@ -3078,11 +3077,11 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:2
 #, python-format
 msgid "Revert Revision | %(document)s"
-msgstr ""
+msgstr "Pinda Semakan | %(document)s"
 
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:10
 msgid "Are you sure you want to revert to this revision?"
-msgstr ""
+msgstr "Anda pasti mahu pinda semakan ini?"
 
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:18
 msgid "Document"
@@ -3094,11 +3093,11 @@ msgstr ""
 
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:33
 msgid "Why are you reverting to this revision?"
-msgstr ""
+msgstr "Kenapa anda pinda semakan ini?"
 
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:36
 msgid "You are about to revert the document to this revision. Click \"revert\" to revert to the content&nbsp;above."
-msgstr ""
+msgstr "Anda akan pinda dokumen ini kepada semakan ini. Klik \"pinda\" untuk meminda kandungan &nbsp; di atas."
 
 #: kuma/wiki/jinja2/wiki/create.html:6
 msgid "Create a New Template"
@@ -3178,15 +3177,15 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/document.html:239
 #, python-format
 msgid ""
-"An update to this document <abbr title=\"%(started_at)s\">is currently in progress</abbr>. If the content below seems stale or if something is missing, please <a href=\"%(url)s\">reload this page</"
-"a> in a few minutes."
+"An update to this document <abbr title=\"%(started_at)s\">is currently in progress</abbr>. If the content below seems stale or if something is missing, please <a href=\"%(url)s\">reload this "
+"page</a> in a few minutes."
 msgstr ""
 
 #: kuma/wiki/jinja2/wiki/document.html:248
 #, python-format
 msgid ""
-"An update to this document <abbr title=\"%(scheduled_at)s\">has been scheduled</abbr>. If the content below seems stale or if something is missing, please <a href=\"%(url)s\">reload this page</a> "
-"in a few minutes."
+"An update to this document <abbr title=\"%(scheduled_at)s\">has been scheduled</abbr>. If the content below seems stale or if something is missing, please <a href=\"%(url)s\">reload this page</a> in"
+" a few minutes."
 msgstr ""
 
 #: kuma/wiki/jinja2/wiki/document.html:266
@@ -3261,11 +3260,11 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/edit.html:43 kuma/wiki/jinja2/wiki/edit.html:55 kuma/wiki/jinja2/wiki/includes/document_macros.html:42 kuma/wiki/jinja2/wiki/includes/document_macros.html:58
 #, python-format
 msgid "Revision %(id)s by <a href=\"%(user_profile_url)s\">%(user)s</a> on %(date)s"
-msgstr ""
+msgstr "Semakan %(id)s oleh <a href=\"%(user_profile_url)s\">%(user)s</a> pada %(date)s"
 
 #: kuma/wiki/jinja2/wiki/edit.html:51
 msgid "Current Revision:"
-msgstr ""
+msgstr "Semakan Semasa:"
 
 #: kuma/wiki/jinja2/wiki/edit.html:86
 msgid "Search results summary:"
@@ -3423,23 +3422,23 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/revision.html:2
 #, python-format
 msgid "Revision %(id)s | %(title)s"
-msgstr ""
+msgstr "Semakan %(id)s | %(title)s"
 
 #: kuma/wiki/jinja2/wiki/revision.html:13
 msgid "Revision Information"
-msgstr ""
+msgstr "Maklumat Semakan"
 
 #: kuma/wiki/jinja2/wiki/revision.html:17
 msgid "Revision slug:"
-msgstr ""
+msgstr "Slug semakan:"
 
 #: kuma/wiki/jinja2/wiki/revision.html:21
 msgid "Revision title:"
-msgstr ""
+msgstr "Tajuk semakan:"
 
 #: kuma/wiki/jinja2/wiki/revision.html:25
 msgid "Revision id:"
-msgstr ""
+msgstr "ID semakan:"
 
 #: kuma/wiki/jinja2/wiki/revision.html:29
 msgid "Created:"
@@ -3451,19 +3450,19 @@ msgstr ""
 
 #: kuma/wiki/jinja2/wiki/revision.html:38
 msgid "Is current revision?"
-msgstr ""
+msgstr "Adakah semakan semasa?"
 
 #: kuma/wiki/jinja2/wiki/revision.html:61
 msgid "Revision Content"
-msgstr ""
+msgstr "Kandungan Semakan"
 
 #: kuma/wiki/jinja2/wiki/revision.html:69
 msgid "Revision Source"
-msgstr ""
+msgstr "Sumber Semakan"
 
 #: kuma/wiki/jinja2/wiki/revision.html:76 kuma/wiki/jinja2/wiki/list/revisions.html:70
 msgid "Revert to this revision"
-msgstr ""
+msgstr "Pinda ke semakan ini"
 
 #: kuma/wiki/jinja2/wiki/select_locale.html:2
 #, python-format
@@ -3657,12 +3656,12 @@ msgstr ""
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:29
 msgid "Change Revisions"
-msgstr ""
+msgstr "Tukar Semakan"
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:37 kuma/wiki/jinja2/wiki/includes/document_macros.html:53
 #, python-format
 msgid "Revision %(num)s:"
-msgstr ""
+msgstr "Semakan %(num)s:"
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:82 kuma/wiki/jinja2/wiki/includes/revision_diff_table.html:8
 msgid "The server is rendering the content comparison. Please refresh this page in a few minutes."
@@ -3754,7 +3753,6 @@ msgstr ""
 msgid "There was a scripting error on this page. While it is being addressed by site editors, you can view partial content below."
 msgid_plural "There were scripting errors on this page. While those are being addressed by site editors, you can view partial content below."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/wiki/jinja2/wiki/includes/kumascript_errors.html:11
 msgid "Hide error information"
@@ -3764,7 +3762,6 @@ msgstr ""
 msgid "More information about this error"
 msgid_plural "More information about these errors"
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/wiki/jinja2/wiki/includes/kumascript_errors.html:19
 msgid "Anyone with an MDN profile can edit a document to fix an error. Use the <a href=\"/docs/MDN/Kuma/Troubleshooting_KumaScript_errors\">KumaScript troubleshooting guide</a> as a starting point."
@@ -3820,11 +3817,11 @@ msgstr ""
 
 #: kuma/wiki/jinja2/wiki/includes/revision_comment.html:2
 msgid "Revision Comment"
-msgstr ""
+msgstr "Komen Semakan"
 
 #: kuma/wiki/jinja2/wiki/includes/revision_comment.html:2
 msgid "Learn how to use Revision Comments"
-msgstr ""
+msgstr "Ketahui cara menggunakan Komen Semakan"
 
 #: kuma/wiki/jinja2/wiki/includes/revision_comment.html:3
 msgid "Tell us why you made additions and changes. It is optional, but will make page history easier to understand."
@@ -3833,8 +3830,8 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/includes/spam_error.html:2
 #, python-format
 msgid ""
-"Your submission includes content that may not be suitable for MDN. Repeated attempts to submit unsuitable material may result in your account being deactivated. See our guide “<a href="
-"\"%(does_this_belong_url)s\">Does this belong on MDN?</a>” for details on what constitutes appropriate material."
+"Your submission includes content that may not be suitable for MDN. Repeated attempts to submit unsuitable material may result in your account being deactivated. See our guide “<a "
+"href=\"%(does_this_belong_url)s\">Does this belong on MDN?</a>” for details on what constitutes appropriate material."
 msgstr ""
 
 #: kuma/wiki/jinja2/wiki/includes/spam_error.html:11
@@ -3870,7 +3867,6 @@ msgstr ""
 msgid "Found %(num)s document."
 msgid_plural "Found %(num)s documents"
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/wiki/jinja2/wiki/list/documents.html:4
 #, python-format
@@ -3886,7 +3882,6 @@ msgstr ""
 msgid "Found %(num)s template."
 msgid_plural "Found %(num)s templates"
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/wiki/jinja2/wiki/list/documents.html:9
 msgid "Documents with errors"
@@ -3948,7 +3943,7 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/list/revisions.html:2
 #, python-format
 msgid "Revision History | %(document)s"
-msgstr ""
+msgstr "Sejarah Semakan | %(document)s"
 
 #: kuma/wiki/jinja2/wiki/list/revisions.html:14
 msgid "History of"
@@ -3956,7 +3951,7 @@ msgstr ""
 
 #: kuma/wiki/jinja2/wiki/list/revisions.html:17
 msgid "Revision history for:"
-msgstr ""
+msgstr "Sejarah semakan untuk:"
 
 #: kuma/wiki/jinja2/wiki/list/revisions.html:42
 msgid "Compare Selected Translations"
@@ -3964,11 +3959,11 @@ msgstr ""
 
 #: kuma/wiki/jinja2/wiki/list/revisions.html:42
 msgid "Compare Selected Revisions"
-msgstr ""
+msgstr "Bandingkan Semakan Dipilih"
 
 #: kuma/wiki/jinja2/wiki/list/revisions.html:78
 msgid "This document has no revisions."
-msgstr ""
+msgstr "Dokumen ini tiada semakan."
 
 #: kuma/wiki/jinja2/wiki/list/tags.html:2
 msgid "All Tags"
@@ -3992,7 +3987,6 @@ msgstr ""
 msgid "Found %(count)s document."
 msgid_plural "Found %(count)s documents."
 msgstr[0] ""
-msgstr[1] ""
 
 #: kuma/wiki/templates/admin/wiki/purge_documents.html:4 kuma/wiki/templates/admin/wiki/purge_documents.html:25 kuma/wiki/templates/admin/wiki/purge_documents.html:30
 #: kuma/wiki/templates/admin/wiki/purge_documents.html:54
@@ -4050,7 +4044,7 @@ msgstr ""
 #: kuma/wiki/templatetags/jinja_helpers.py:101 kuma/wiki/templatetags/jinja_helpers.py:102 kuma/wiki/templatetags/jinja_helpers.py:117 kuma/wiki/templatetags/jinja_helpers.py:118
 #, python-format
 msgid "Revision %s"
-msgstr ""
+msgstr "Semakan %s"
 
 #: kuma/wiki/templatetags/jinja_helpers.py:107
 msgid "There was an error generating the content."

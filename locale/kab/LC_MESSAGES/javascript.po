@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: MDN 2016.0\n"
 "Report-Msgid-Bugs-To: dev-mdn@lists.mozilla.org\n"
 "POT-Creation-Date: 2016-08-15 10:03-0700\n"
-"PO-Revision-Date: 2016-09-23 19:45+0000\n"
+"PO-Revision-Date: 2016-09-27 14:25+0000\n"
 "Last-Translator: belkacem77 <belkacem77@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: kab\n"
@@ -102,7 +102,7 @@ msgstr "Amaynut n wayen tḥemleḍ..."
 
 #: kuma/static/js/wiki-compat-tables.js:23
 msgid "Open implementation notes"
-msgstr ""
+msgstr "Ldi-d tizmilin n bennu"
 
 #: kuma/static/js/wiki-compat-tables.js:23
 msgid "Open"
@@ -110,7 +110,7 @@ msgstr "Ldi"
 
 #: kuma/static/js/wiki-compat-tables.js:25
 msgid "Return to compatibility table."
-msgstr ""
+msgstr "Uɣal ɣer tfelwit n umṣada."
 
 #: kuma/static/js/wiki-compat-tables.js:25
 msgid "Close"
@@ -118,7 +118,7 @@ msgstr "Mdel"
 
 #: kuma/static/js/wiki-compat-tables.js:108
 msgid "New compatibility tables are in beta "
-msgstr ""
+msgstr "Tifelwiyin timaynutin n umṣada llant s lqem beta "
 
 #: kuma/static/js/wiki-compat-tables.js:112
 msgid "More about the beta."
@@ -126,7 +126,7 @@ msgstr "Ugar ɣef beta."
 
 #: kuma/static/js/wiki-compat-tables.js:115
 msgid "Take the survey"
-msgstr ""
+msgstr "Err i uḥedqis"
 
 #: kuma/static/js/wiki-compat-tables.js:118
 msgid "Report an error."
@@ -154,19 +154,19 @@ msgstr "azemz arussin"
 
 #: kuma/static/js/wiki-edit.js:415
 msgid "You have a draft from:"
-msgstr ""
+msgstr "Ɣur-k arewway yettwasekles si:"
 
 #: kuma/static/js/wiki-edit.js:416
 msgid "Restore the draft content"
-msgstr ""
+msgstr "Snes agbur n urewway"
 
 #: kuma/static/js/wiki-edit.js:417
 msgid "Discard the draft"
-msgstr ""
+msgstr "Kkes arewway"
 
 #: kuma/static/js/wiki-edit.js:442
 msgid "restored"
-msgstr ""
+msgstr "yuɣal-d"
 
 #: kuma/static/js/wiki-edit.js:571
 msgid "Draft"
@@ -182,11 +182,11 @@ msgstr "yattwasekles s wudem awurman"
 
 #: kuma/static/js/wiki-edit.js:618
 msgid "published"
-msgstr ""
+msgstr "yeffeɣ-d"
 
 #: kuma/static/js/wiki-edit.js:622
 msgid "discarded"
-msgstr ""
+msgstr "yettwakkes"
 
 #: kuma/static/js/wiki-edit.js:660
 msgid "Autosave enabled."
@@ -211,11 +211,11 @@ msgstr "Amek ad teɣreḍ taseddast CSS."
 
 #: kuma/static/js/wiki.js:570
 msgid "Search Stack Overflow"
-msgstr ""
+msgstr "Nadi di Stack Overflow"
 
 #: kuma/static/js/wiki.js:677
 msgid "Your browser does not support MathML. A CSS fallback has been used instead."
-msgstr ""
+msgstr "Iminig inek ur isefrak ara MathML. Agbur n usemselsi s CSS yettwaseqdec."
 
 #: kuma/static/js/wiki.js:892
 msgid "Details"
@@ -235,7 +235,7 @@ msgstr "Imeddayen"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-link-customization/plugin.js:87
 msgid "Article Title Lookup / Link Text"
-msgstr ""
+msgstr "Anadi n imagraden s uzwel/aḍris n useɣwen"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-link-launch/plugin.js:12
 msgid "Launch"
@@ -243,11 +243,11 @@ msgstr "Senker"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-redirect/plugin.js:17
 msgid "Create a Redirect"
-msgstr ""
+msgstr "Rnu awelleh"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-redirect/dialogs/mdn-redirect.js:4
 msgid "MDN Redirect"
-msgstr ""
+msgstr "Awelleh MDN"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-redirect/dialogs/mdn-redirect.js:23 kuma/static/js/libs/ckeditor/source/plugins/mdn-sample-finder/dialogs/mdn-sample-finder.js:44
 msgid "Document"
@@ -259,11 +259,11 @@ msgstr "URL"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-sample-finder/plugin.js:17
 msgid "Insert Code Sample iFrame"
-msgstr ""
+msgstr "Ger iFrame d amedya n tengalt"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-sample-finder/dialogs/mdn-sample-finder.js:5
 msgid "Sample Finder"
-msgstr ""
+msgstr "Anaram n imedyaten"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-sample-finder/dialogs/mdn-sample-finder.js:20
 msgid "Select a section"
@@ -275,7 +275,7 @@ msgstr "Tigezmiyin deg isemli"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-sampler/plugin.js:12
 msgid "What should the sample title be?"
-msgstr ""
+msgstr "Amek yessefk ad yili uzwel n umedya agi?"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-sampler/plugin.js:23
 msgid "HTML Content"
@@ -303,7 +303,7 @@ msgstr "Agbur JavaScript aḥerfi"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-sampler/plugin.js:52
 msgid "Insert Code Sample Template"
-msgstr ""
+msgstr "Ger Taneɣruft d amedya n tengalt"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-syntaxhighlighter/plugin.js:24
 msgid "Syntax Highlighter"
@@ -327,15 +327,15 @@ msgstr "Senṭeḍ URL n tvidyut YouTube"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-youtube/plugin.js:30
 msgid "Aspect ratio"
-msgstr ""
+msgstr "Ameskar n telɣa"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-youtube/plugin.js:31
 msgid "You must input a valid YouTube video URL."
-msgstr ""
+msgstr "Yessefk ad d-muddeḍ tansa URL tameɣtut i tvidyut YouTube."
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-youtube/plugin.js:32
 msgid "The URL you've entered doesn't appear to be valid"
-msgstr ""
+msgstr "Tansa URL ikecmen tettban mačči d tameɣtut"
 
 #: kuma/static/js/libs/ckeditor/source/plugins/mdn-youtube/plugin.js:33
 msgid "Default"
