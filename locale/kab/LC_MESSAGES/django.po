@@ -5,7 +5,7 @@ msgstr ""
 "Project-Id-Version: MDN 2016.0\n"
 "Report-Msgid-Bugs-To: dev-mdn@lists.mozilla.org\n"
 "POT-Creation-Date: 2016-08-15 10:03-0700\n"
-"PO-Revision-Date: 2016-10-12 10:58+0000\n"
+"PO-Revision-Date: 2016-10-13 13:42+0000\n"
 "Last-Translator: Moḥend Belqasem <belkacem77@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: kab\n"
@@ -2688,7 +2688,7 @@ msgstr "Atiknikan - imedyaten n tengalt, API neɣ tatiknulujit"
 
 #: kuma/wiki/constants.py:210 kuma/wiki/jinja2/wiki/includes/approvals.html:19
 msgid "Editorial - prose, grammar, or content"
-msgstr ""
+msgstr "Tira - aḍris, tajeṛṛumt, neɣ agbur"
 
 #: kuma/wiki/constants.py:215
 msgid "Localization in progress - not completely translated yet."
@@ -3038,7 +3038,7 @@ msgstr "Tuucḍa Akismet"
 
 #: kuma/wiki/models.py:1953
 msgid "Review of Akismet's classification as spam"
-msgstr ""
+msgstr "Taɣuṛi nniḍen n usmizzwer s uspam sɣuṛ Akismet"
 
 #: kuma/wiki/models.py:1960
 msgid "Staff reviewer"
@@ -3091,7 +3091,7 @@ msgstr "Kkes isemliyen | %(document)s"
 
 #: kuma/wiki/jinja2/wiki/confirm_document_delete.html:9
 msgid "Cannot delete pages with children until we fix this bug:"
-msgstr ""
+msgstr "Ur yezmir ara ad yekkes isebtar igebren isebtar isnawanen ara yefra ubug agi:"
 
 #: kuma/wiki/jinja2/wiki/confirm_document_delete.html:17 kuma/wiki/jinja2/wiki/confirm_revision_revert.html:21
 msgid "Creator"
@@ -3140,7 +3140,7 @@ msgstr "Acuɣer tebɣid awennez n isemli ɣer uɛiwed agi n tmuɣli?"
 
 #: kuma/wiki/jinja2/wiki/confirm_revision_revert.html:36
 msgid "You are about to revert the document to this revision. Click \"revert\" to revert to the content&nbsp;above."
-msgstr ""
+msgstr "Aqlak tettedduḍ ad tuɣal€d ɣer lqem agi n isemli. Sit ɣef \"Wennez tikelt nniḍen\" akken ad tuɣaleḍ ɣer ugbur daw-a."
 
 #: kuma/wiki/jinja2/wiki/create.html:6
 msgid "Create a New Template"
@@ -3160,7 +3160,7 @@ msgstr "Isemli amaynut"
 
 #: kuma/wiki/jinja2/wiki/create.html:41
 msgid "URL segment that identifies the page"
-msgstr ""
+msgstr "Iḥricen n URL yemmalen asebter"
 
 #: kuma/wiki/jinja2/wiki/deletion_log.html:2 kuma/wiki/jinja2/wiki/deletion_log.html:7
 msgid "Document Deleted"
@@ -3371,7 +3371,7 @@ msgstr "Issin amek ad ternuḍ tibzimin i umagrad"
 #: kuma/wiki/jinja2/wiki/edit.html:193 kuma/wiki/jinja2/wiki/translate.html:114
 #, python-format
 msgid "Categorize the article. It will make the article findable under the right filters in the search engine. <a target=\"_blank\" href=\"%(url)s\">Read the Tagging Guide</a>."
-msgstr ""
+msgstr "Err taggayt i umagrad. Ayagi ad isireg tifin ines s useqdec n imzizdigen iwulmen deg imseddayen n undai. <a target=\"_blank\" href=\"%(url)s\">Ɣeṛ amnir </a>."
 
 #: kuma/wiki/jinja2/wiki/feed_docs_updated.html:3
 #, python-format
@@ -3395,7 +3395,7 @@ msgstr "Senkez amagrad | %(document)s"
 
 #: kuma/wiki/jinja2/wiki/move.html:20
 msgid "Please specify the new location for this page by filling out the fields below. Be sure your new destination follows these rules:"
-msgstr ""
+msgstr "Ma ulac aɣilif mudd-d adig amaynut n usebter agi s tmerna n telɣut deg urti agi. Wali taniɣert tamaynut tettqadeṛ ilugan agi:"
 
 #: kuma/wiki/jinja2/wiki/move.html:22
 msgid "Make sure the location you specify is located immediately under an existing page."
@@ -3411,11 +3411,11 @@ msgstr "Mmel kan aḥric n tensa URL yeṭṭafaṛen \"/docs/\"."
 
 #: kuma/wiki/jinja2/wiki/move.html:25
 msgid "Don't include a trailing slash (this will be removed for you if you include it, but you should leave it out)."
-msgstr ""
+msgstr "Ur rennu ara islacen ar tagara (ma terniḍ yiwen, ad yettwakkes, acukan yif-it ma yella ur terniḍ ara)."
 
 #: kuma/wiki/jinja2/wiki/move.html:31
 msgid "Your requested move cannot be completed due to the following slug conflicts:"
-msgstr ""
+msgstr "Asenkez i d-yettwasutren ur yezmir ara ad yemmed acku llant tilla agi:"
 
 #: kuma/wiki/jinja2/wiki/move.html:54
 msgid "Current Slug:"
@@ -3449,7 +3449,7 @@ msgstr "Senkez asebter"
 #: kuma/wiki/jinja2/wiki/move.html:97
 #, python-format
 msgid "The following %(count)s subpages will be affected by this move:"
-msgstr ""
+msgstr "%(count)s agi n isebtar ad ttuḥazen deg usenkez agi:"
 
 #: kuma/wiki/jinja2/wiki/move.html:104
 msgid "No other documents will be affected by this change."
@@ -3457,16 +3457,16 @@ msgstr "Ulac isemli nniḍen ara yeḥaz usnifel agi."
 
 #: kuma/wiki/jinja2/wiki/move_requested.html:2
 msgid "Page move requested"
-msgstr ""
+msgstr "Asuter n usenkez n usebtar"
 
 #: kuma/wiki/jinja2/wiki/move_requested.html:9
 #, python-format
 msgid "<h1>Page Move Scheduled</h1> <p>Moving %(old_slug)s to <a href=\"%(new_url)s\">%(new_slug)s</a></p> <p> You'll receive an email when it finishes, or if any errors occur during the move.</p>"
-msgstr ""
+msgstr "<h1>Asenkez n usebtar ittuhegga</h1> <p>Asenkez n %(old_slug)s ɣer <a href=\"%(new_url)s\">%(new_slug)s</a></p> <p> Ad d-remseḍ izen ticki yemmed neɣ teḍra-d tuccḍa di temhelt.</p>"
 
 #: kuma/wiki/jinja2/wiki/preview.html:13
 msgid "This is a preview of an unsaved document."
-msgstr ""
+msgstr "D taskant n isemli ur yettwakelsen ara."
 
 #: kuma/wiki/jinja2/wiki/revision.html:2
 #, python-format
@@ -3557,11 +3557,11 @@ msgstr "Suqel agbur"
 #: kuma/wiki/jinja2/wiki/translate.html:83
 #, python-format
 msgid "Approved %(locale)s version:"
-msgstr ""
+msgstr "Lqem %(locale)s approuvée&nbsp;:yettwaqbel:"
 
 #: kuma/wiki/jinja2/wiki/translate.html:85
 msgid "View Rendered"
-msgstr ""
+msgstr "Wali talɣa"
 
 #: kuma/wiki/jinja2/wiki/translate.html:85
 msgid "View Source"
@@ -3605,7 +3605,7 @@ msgstr "Tizmilin n lqem"
 
 #: kuma/wiki/jinja2/wiki/translate.html:148
 msgid "Localization flags"
-msgstr ""
+msgstr "Tibzimin n tsuqilt"
 
 #: kuma/wiki/jinja2/wiki/email/edited.ltxt:4
 #, python-format
@@ -3681,7 +3681,7 @@ msgstr "Senkez amagrad agi"
 
 #: kuma/wiki/jinja2/wiki/includes/buttons.html:70
 msgid "View in admin"
-msgstr ""
+msgstr "Sken di tnebdalt"
 
 #: kuma/wiki/jinja2/wiki/includes/buttons.html:78
 msgid "Delete this article"
@@ -3701,7 +3701,7 @@ msgstr "Siggez amagrad agi"
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:2
 msgid "breadcrumbs"
-msgstr ""
+msgstr "Breadcrumbs"
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:21
 msgid "See also"
@@ -3709,12 +3709,12 @@ msgstr "Wali daɣen"
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:29
 msgid "Change Revisions"
-msgstr ""
+msgstr "Snifel taɣuri/awali nniḍen"
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:37 kuma/wiki/jinja2/wiki/includes/document_macros.html:53
 #, python-format
 msgid "Revision %(num)s:"
-msgstr ""
+msgstr "Taɣuri nniḍen %(num)s:"
 
 #: kuma/wiki/jinja2/wiki/includes/document_macros.html:82 kuma/wiki/jinja2/wiki/includes/revision_diff_table.html:8
 msgid "The server is rendering the content comparison. Please refresh this page in a few minutes."
@@ -3896,12 +3896,12 @@ msgstr ""
 #: kuma/wiki/jinja2/wiki/includes/spam_error.html:11
 #, python-format
 msgid "If you believe you’ve received this message by mistake, please save a draft of your content and <a href=\"%(admin_email)s\"> contact the site administrators</a>."
-msgstr ""
+msgstr "Ma tɣileḍ d akken armas n yizen agi d tuccḍa, sekles ma ulac aɣilif agbur agi s waddad arewway sakin <a href=\"%(admin_email)s\"> nermes inebdalen n usmel</a>."
 
 #: kuma/wiki/jinja2/wiki/includes/spam_error.html:19
 #, python-format
 msgid "If you are a spam moderator, you can <a href=\"%(akismet_submission_url)s\" target=\"_blank\">mark this submission as ham</a> and try submitting it again."
-msgstr ""
+msgstr "Ma tettekkad akked terbaɛt n inerdalen, tzemreḍ <a href=\"%(akismet_submission_url)s\" target=\"_blank\">ad tesuluḍ attekki agi am ugbur yettwaqeblen</a> sakin azen-it-id tikelt nniḍen."
 
 #: kuma/wiki/jinja2/wiki/includes/translate_description.html:6
 msgid "Translate Description"
@@ -3989,12 +3989,12 @@ msgstr "Akk imagraden ttṛaǧun taɣuri/awali nniḍen"
 #: kuma/wiki/jinja2/wiki/list/needs_review.html:25
 #, python-format
 msgid "Please review these articles for spelling, grammar, formatting, layout, etc., and then clear the Editorial review flag. <a href=\"%(url)s\">See more detailed instructions</a>."
-msgstr ""
+msgstr "Ma ulac aɣilif, wali tikelt nniḍen imagraden agi deg ayen icudden ɣer tuccḍiwin n tseddast, talɣa, asuddes atg, Sakin, kkes ticraḍ n tira. <a href=\"%(url)s\">Wali talqayt</a>."
 
 #: kuma/wiki/jinja2/wiki/list/needs_review.html:31
 #, python-format
 msgid "Please review these articles for technical accuracy and completeness, and then clear the Technical review flag. <a href=\"%(url)s\">See more detailed instructions</a>."
-msgstr ""
+msgstr "Ma ulac aɣilif, wali tikelt nniḍen imagraden agi deg ayen icudden ɣer tseddi tatiknikantakked telqayt. Sakin, kkes ticraḍ titiknikanin. <a href=\"%(url)s\">Wali talqayt</a>."
 
 #: kuma/wiki/jinja2/wiki/list/needs_review.html:36
 #, python-format
@@ -4004,7 +4004,7 @@ msgstr "%(count)s n isemliyen yettwafen."
 #: kuma/wiki/jinja2/wiki/list/revisions.html:2
 #, python-format
 msgid "Revision History | %(document)s"
-msgstr ""
+msgstr "Amazray n tɣri/awali nniḍen | %(document)s"
 
 #: kuma/wiki/jinja2/wiki/list/revisions.html:14
 msgid "History of"
@@ -4041,7 +4041,7 @@ msgstr "Imagraden yettwasuqlen s tebzimt: %(tag)s"
 
 #: kuma/wiki/jinja2/wiki/list/with_localization_tags.html:5
 msgid "Articles tagged with any localization tags"
-msgstr ""
+msgstr "Imagraden s tebzimin n usideg"
 
 #: kuma/wiki/jinja2/wiki/list/with_localization_tags.html:15
 #, python-format
